@@ -58,7 +58,12 @@ services:
 
   worker:
     <<: *node
-    command: pnpm --filter @echdyn/worker dev
+    # Run tsx directly (not via pnpm) under an init process so SIGTERM reaches the worker
+    # and it can finish in-flight extractions before exiting
+    init: true
+    working_dir: /app/apps/worker
+    command: node_modules/.bin/tsx watch src/index.ts
+    stop_grace_period: 2m
     environment:
       <<: *node-env
       WORKER_HEALTH_PORT: "3001"

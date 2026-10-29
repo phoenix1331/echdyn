@@ -93,7 +93,16 @@ importers:
       '@echdyn/core':
         specifier: workspace:*
         version: link:../../packages/core
+      bullmq:
+        specifier: ^6.5.1
+        version: 6.5.1(ioredis@6.0.0)
+      ioredis:
+        specifier: ^6.0.0
+        version: 6.0.0
     devDependencies:
+      drizzle-orm:
+        specifier: 0.45.4
+        version: 0.45.4(postgres@3.4.9)
       tsx:
         specifier: ^4.23.15
         version: 4.23.15

@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json && pnpm -r typecheck",
     "prepare": "husky",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write . && eslint --fix .",
+    "format": "eslint --fix . && prettier --write .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "db:generate": "pnpm --filter @echdyn/core db:generate",

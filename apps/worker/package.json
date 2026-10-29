@@ -9,9 +9,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@echdyn/core": "workspace:*"
+    "@echdyn/core": "workspace:*",
+    "bullmq": "^6.5.1",
+    "ioredis": "^6.0.0"
   },
   "devDependencies": {
+    "drizzle-orm": "0.45.4",
     "tsx": "^4.23.15"
   }
 }
