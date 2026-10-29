@@ -26,6 +26,8 @@ export type DocumentStatus = (typeof documentStatus.enumValues)[number];
 export interface FieldError {
   field: string;
   message: string;
+  /** Business rule that raised it; absent for schema (type/format) errors */
+  rule?: string;
 }
 
 const timestamps = {

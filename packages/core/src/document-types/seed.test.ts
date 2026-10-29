@@ -41,7 +41,11 @@ describe.skipIf(!testUrl)("seedDocumentTypes", () => {
 
   it("refuses to overwrite a published schema without a version bump", async () => {
     await seedDocumentTypes(db);
-    const edited = { ...energyBill, schema: energyBill.schema.extend({ tariff: z.string() }) };
+    const edited = {
+      ...energyBill,
+      schema: energyBill.schema.extend({ tariff: z.string() }),
+      rules: [],
+    };
 
     await expect(seedDocumentTypes(db, [edited])).rejects.toThrow(/Bump the version/);
   });
@@ -52,6 +56,7 @@ describe.skipIf(!testUrl)("seedDocumentTypes", () => {
       ...energyBill,
       version: 2,
       schema: energyBill.schema.extend({ tariff: z.string() }),
+      rules: [],
     };
 
     await seedDocumentTypes(db, [bumped]);

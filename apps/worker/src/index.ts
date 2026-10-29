@@ -5,6 +5,7 @@ import {
   createStorage,
   loadConfig,
   preProcessStage,
+  validateStage,
 } from "@echdyn/core";
 import { Ollama } from "ollama";
 import { createHealthServer } from "./health";
@@ -30,6 +31,7 @@ const worker = createDocumentWorker({
       client: new Ollama({ host: config.OLLAMA_HOST }),
       model: config.OLLAMA_TEXT_MODEL,
     }),
+    validateStage,
   ],
   connection,
   concurrency,

@@ -1,6 +1,14 @@
-export { energyBill, energyBillSchema, type EnergyBill } from "./energy-bill";
+export {
+  energyBill,
+  energyBillRules,
+  energyBillSchema,
+  isValidMpanCore,
+  UK_ENERGY_VAT_RATES,
+  type EnergyBill,
+} from "./energy-bill";
 export {
   documentTypeRegistry,
+  findDocumentType,
   getDocumentType,
   toJsonSchema,
   type DocumentTypeDefinition,

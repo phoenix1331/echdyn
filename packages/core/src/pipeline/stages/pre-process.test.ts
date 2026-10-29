@@ -22,7 +22,7 @@ describe("extractPdfText", () => {
     expect(text.pageCount).toBe(1);
     expect(text.hasTextLayer).toBe(true);
     expect(text.pages[0]?.split("\n")).toEqual(
-      expect.arrayContaining(["Northern Power Ltd", "MPAN: 1200023456789"]),
+      expect.arrayContaining(["Northern Power Ltd", "MPAN: 1200023456781"]),
     );
     expect(text.pages[0]).toContain("Total amount due");
   });

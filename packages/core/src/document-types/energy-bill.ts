@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { approxEqual, daysInclusive, gbp, type BusinessRule } from "../validation/rules";
 import type { DocumentTypeDefinition } from "./registry";
 
 const money = z.number().nonnegative();
@@ -26,9 +27,86 @@ export const energyBillSchema = z.object({
 
 export type EnergyBill = z.infer<typeof energyBillSchema>;
 
+/** UK VAT on business energy: standard 20%, reduced 5% (de minimis use), 0% if exempt */
+export const UK_ENERGY_VAT_RATES = [0, 5, 20] as const;
+
+const MPAN_WEIGHTS = [3, 5, 7, 13, 17, 19, 23, 29, 31, 37, 41, 43];
+
+/** Bills round each line item, so the recomputed subtotal may drift by a few pence */
+const SUBTOTAL_TOLERANCE_GBP = 0.1;
+const ROUNDING_TOLERANCE_GBP = 0.02;
+
+export function isValidMpanCore(mpan: string): boolean {
+  const digits = Array.from(mpan, Number);
+  const sum = MPAN_WEIGHTS.reduce((total, weight, i) => total + weight * (digits[i] ?? 0), 0);
+  return (sum % 11) % 10 === digits[12];
+}
+
+export const energyBillRules: readonly BusinessRule<EnergyBill>[] = [
+  {
+    name: "billing-period-order",
+    fields: ["billing_period_start", "billing_period_end"],
+    check: (bill) =>
+      bill.billing_period_end >= bill.billing_period_start
+        ? null
+        : "Billing period ends before it starts",
+  },
+  {
+    name: "mpan-check-digit",
+    fields: ["meter_point_number"],
+    // 13 digits is an electricity MPAN core with a check digit; gas MPRNs have none
+    check: (bill) =>
+      bill.meter_point_number.length !== 13 || isValidMpanCore(bill.meter_point_number)
+        ? null
+        : "MPAN check digit does not match: likely a misread digit",
+  },
+  {
+    name: "subtotal-arithmetic",
+    fields: ["consumption_kwh", "unit_rate_pence", "standing_charge_pence_per_day", "subtotal_gbp"],
+    check: (bill) => {
+      const days = daysInclusive(bill.billing_period_start, bill.billing_period_end);
+      const expected =
+        (bill.consumption_kwh * bill.unit_rate_pence + days * bill.standing_charge_pence_per_day) /
+        100;
+      return approxEqual(expected, bill.subtotal_gbp, SUBTOTAL_TOLERANCE_GBP)
+        ? null
+        : `Consumption x unit rate + ${days} days standing charge = ${gbp(expected)}, but subtotal is ${gbp(bill.subtotal_gbp)}`;
+    },
+  },
+  {
+    name: "vat-rate",
+    fields: ["vat_rate_percent"],
+    check: (bill) =>
+      (UK_ENERGY_VAT_RATES as readonly number[]).includes(bill.vat_rate_percent)
+        ? null
+        : `VAT rate ${bill.vat_rate_percent}% is not a UK energy rate (${UK_ENERGY_VAT_RATES.join(", ")}%)`,
+  },
+  {
+    name: "vat-amount",
+    fields: ["subtotal_gbp", "vat_rate_percent", "vat_gbp"],
+    check: (bill) => {
+      const expected = (bill.subtotal_gbp * bill.vat_rate_percent) / 100;
+      return approxEqual(expected, bill.vat_gbp, ROUNDING_TOLERANCE_GBP)
+        ? null
+        : `${bill.vat_rate_percent}% VAT on ${gbp(bill.subtotal_gbp)} is ${gbp(expected)}, but VAT is ${gbp(bill.vat_gbp)}`;
+    },
+  },
+  {
+    name: "total-adds-up",
+    fields: ["subtotal_gbp", "vat_gbp", "total_gbp"],
+    check: (bill) => {
+      const expected = bill.subtotal_gbp + bill.vat_gbp;
+      return approxEqual(expected, bill.total_gbp, ROUNDING_TOLERANCE_GBP)
+        ? null
+        : `Subtotal + VAT = ${gbp(expected)}, but total is ${gbp(bill.total_gbp)}`;
+    },
+  },
+];
+
 export const energyBill: DocumentTypeDefinition<typeof energyBillSchema> = {
   slug: "uk-energy-bill",
   name: "UK business energy bill",
   version: 1,
   schema: energyBillSchema,
+  rules: energyBillRules,
 };

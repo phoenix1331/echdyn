@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { energyBill } from "./energy-bill";
-import { documentTypeRegistry, getDocumentType, toJsonSchema } from "./registry";
+import { documentTypeRegistry, findDocumentType, getDocumentType, toJsonSchema } from "./registry";
 
 interface PropertySchema {
   type: string;
@@ -15,8 +15,21 @@ describe("document type registry", () => {
     expect(getDocumentType("uk-energy-bill")).toBe(energyBill);
   });
 
-  it("returns undefined for an unknown slug", () => {
+  it("returns undefined for an unknown slug or version", () => {
     expect(getDocumentType("nope")).toBeUndefined();
+    expect(getDocumentType("uk-energy-bill", 99)).toBeUndefined();
+  });
+
+  it("finds an exact version", () => {
+    expect(getDocumentType("uk-energy-bill", 1)).toBe(energyBill);
+  });
+
+  it("prefers the latest version when none is given", () => {
+    const v2 = { ...energyBill, version: 2 };
+    const definitions = [energyBill, v2];
+
+    expect(findDocumentType(definitions, "uk-energy-bill")).toBe(v2);
+    expect(findDocumentType(definitions, "uk-energy-bill", 1)).toBe(energyBill);
   });
 
   it("has unique slug and version pairs", () => {
