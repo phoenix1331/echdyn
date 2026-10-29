@@ -6,3 +6,10 @@ export {
 } from "./pre-process";
 export { createExtractStage } from "./extract";
 export { validateStage } from "./validate";
+export {
+  createScoreStage,
+  mismatchedFields,
+  RUN_MISMATCH_RULE,
+  scoreExtractions,
+  type ScoreSettings,
+} from "./score";

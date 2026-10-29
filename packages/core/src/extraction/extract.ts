@@ -22,6 +22,8 @@ export interface TextExtractionInput {
 export interface ExtractionSettings {
   client: ChatClient;
   model: string;
+  /** 0 for the primary run; a consistency run uses a little randomness so unsure fields disagree */
+  temperature?: number;
 }
 
 export const INVALID_JSON_ERROR: FieldError = {
@@ -47,7 +49,7 @@ function parseObject(raw: string): Record<string, unknown> | null {
  */
 export async function extractText(
   db: Database,
-  { client, model }: ExtractionSettings,
+  { client, model, temperature = 0 }: ExtractionSettings,
   input: TextExtractionInput,
 ): Promise<Extraction> {
   const started = performance.now();
@@ -56,7 +58,7 @@ export async function extractText(
     messages: buildTextPrompt(input.documentTypeName, input.pages),
     format: input.jsonSchema,
     stream: false,
-    options: { temperature: 0 },
+    options: { temperature },
   });
   const durationMs = Math.round(performance.now() - started);
   const rawOutput = response.message.content;

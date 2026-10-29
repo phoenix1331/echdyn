@@ -20,12 +20,14 @@ describe("loadConfig", () => {
     expect(config.S3_REGION).toBe("us-east-1");
     expect(config.S3_FORCE_PATH_STYLE).toBe(true);
     expect(config.OLLAMA_TEXT_MODEL).toBe("qwen3:8b");
+    expect(config.AUTO_APPROVE).toBe(true);
   });
 
-  it("coerces S3_FORCE_PATH_STYLE from a string", () => {
-    const config = loadConfig({ ...validEnv, S3_FORCE_PATH_STYLE: "false" });
+  it("coerces boolean flags from strings", () => {
+    const config = loadConfig({ ...validEnv, S3_FORCE_PATH_STYLE: "false", AUTO_APPROVE: "false" });
 
     expect(config.S3_FORCE_PATH_STYLE).toBe(false);
+    expect(config.AUTO_APPROVE).toBe(false);
   });
 
   it("throws a readable error listing invalid keys", () => {

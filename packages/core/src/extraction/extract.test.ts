@@ -60,6 +60,14 @@ describe.skipIf(!testUrl)("extractText", () => {
     expect(client.requests[0]?.messages?.[1]?.content).toContain("GBP 386.88");
   });
 
+  it("uses the configured temperature for consistency runs", async () => {
+    const client = fakeClient(["{}"]);
+
+    await extractText(db, { client, model: "m", temperature: 0.4 }, input());
+
+    expect(client.requests[0]?.options).toEqual({ temperature: 0.4 });
+  });
+
   it("stores the run with parsed output, model, prompt version and timing", async () => {
     const client = fakeClient(['{"total_gbp": 386.88}']);
 

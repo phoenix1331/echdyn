@@ -13,6 +13,7 @@ const configSchema = z.object({
   OLLAMA_HOST: z.url(),
   OLLAMA_TEXT_MODEL: z.string().min(1),
   OLLAMA_VISION_MODEL: z.string().min(1),
+  AUTO_APPROVE: z.stringbool().default(true),
 });
 
 export type Config = z.infer<typeof configSchema>;

@@ -1,6 +1,7 @@
 import {
   createDatabase,
   createExtractStage,
+  createScoreStage,
   createRedisConnection,
   createStorage,
   loadConfig,
@@ -18,6 +19,7 @@ const concurrency = Number(process.env.WORKER_CONCURRENCY ?? 1);
 const database = createDatabase(config.DATABASE_URL);
 const storage = createStorage(config);
 const connection = createRedisConnection(config.REDIS_URL);
+const ollama = new Ollama({ host: config.OLLAMA_HOST });
 
 if (await storage.ensureBucket()) {
   console.log(`created storage bucket ${storage.bucket}`);
@@ -27,11 +29,12 @@ const worker = createDocumentWorker({
   deps: { db: database.db, storage },
   stages: [
     preProcessStage,
-    createExtractStage({
-      client: new Ollama({ host: config.OLLAMA_HOST }),
-      model: config.OLLAMA_TEXT_MODEL,
-    }),
+    // Primary run at temperature 0, then a consistency run with a little randomness:
+    // fields the model is unsure about tend to change between the two
+    createExtractStage({ client: ollama, model: config.OLLAMA_TEXT_MODEL }),
+    createExtractStage({ client: ollama, model: config.OLLAMA_TEXT_MODEL, temperature: 0.4 }),
     validateStage,
+    createScoreStage({ autoApprove: config.AUTO_APPROVE }),
   ],
   connection,
   concurrency,

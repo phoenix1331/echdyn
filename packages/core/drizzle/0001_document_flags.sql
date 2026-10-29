@@ -1,0 +1,1 @@
+ALTER TABLE "documents" ADD COLUMN "flags" jsonb DEFAULT '[]'::jsonb NOT NULL;

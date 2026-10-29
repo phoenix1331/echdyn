@@ -63,6 +63,8 @@ export const documents = pgTable(
     pageCount: integer("page_count"),
     hasTextLayer: boolean("has_text_layer"),
     error: text("error"),
+    /** Fields the score stage wants a human to check, with the reason for each */
+    flags: jsonb("flags").$type<FieldError[]>().notNull().default([]),
     ...timestamps,
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
