@@ -10,10 +10,12 @@
   "scripts": {
     "dev": "pnpm --parallel --filter \"./apps/*\" dev",
     "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
+    "husky": "^9.1.7",
     "typescript": "^5.9.3"
   }
 }

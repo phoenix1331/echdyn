@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Type checking
+echo "running typecheck..."
+if ! pnpm typecheck; then
+  echo "error: typecheck failed. run pnpm typecheck to see the errors."
+  exit 1
+fi
+
+# Security audit via osv-scanner CLI
+if ! command -v osv-scanner > /dev/null 2>&1; then
+  echo "error: osv-scanner not found. install it: https://github.com/google/osv-scanner"
+  exit 1
+fi
+
+echo "running osv-scanner audit..."
+if ! osv-scanner --lockfile=pnpm-lock.yaml; then
+  echo "error: vulnerable packages detected. review the osv-scanner output above."
+  exit 1
+fi
