@@ -1,9 +1,11 @@
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { sql } from "drizzle-orm";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import type { Database } from "./client";
 
-export const migrationsFolder = fileURLToPath(new URL("../../drizzle", import.meta.url));
+// Built with path.resolve, not new URL(), so bundlers do not treat the folder as an asset
+export const migrationsFolder = resolve(dirname(fileURLToPath(import.meta.url)), "../../drizzle");
 
 export async function migrateDatabase(db: Database): Promise<void> {
   await migrate(db, { migrationsFolder });

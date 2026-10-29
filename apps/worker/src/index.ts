@@ -1,8 +1,14 @@
-import { loadConfig } from "@echdyn/core";
+import { createStorage, loadConfig } from "@echdyn/core";
 import { createHealthServer } from "./health";
 
 const config = loadConfig();
 const healthPort = Number(process.env.WORKER_HEALTH_PORT ?? 3001);
+
+const storage = createStorage(config);
+if (await storage.ensureBucket()) {
+  console.log(`created storage bucket ${storage.bucket}`);
+}
+
 const server = createHealthServer();
 
 server.listen(healthPort, () => {
