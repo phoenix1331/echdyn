@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help up down build restart ps shell logs install models typecheck lint test coverage migrate seed fresh eval-generate
+.PHONY: help up down build restart ps shell logs install models typecheck lint test coverage migrate seed fresh eval-generate eval
 
 APP := web
 EXEC := docker compose exec $(APP)
@@ -60,3 +60,6 @@ fresh: ## Drop all tables, re-run migrations and seed
 
 eval-generate: ## Regenerate the synthetic labelled bill set in eval/sets/synthetic
 	@$(EXEC) pnpm eval:generate
+
+eval: ## Measure accuracy on the labelled sets (MODELS=a,b LIMIT=n to narrow)
+	@$(EXEC) pnpm eval $(if $(MODELS),--models $(MODELS)) $(if $(LIMIT),--limit $(LIMIT))

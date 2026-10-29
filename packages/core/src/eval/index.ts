@@ -12,3 +12,15 @@ export {
   type GeneratedBill,
   type GenerateOptions,
 } from "./synthetic/generate";
+export { renderReport, type ReportMeta } from "./report";
+export { runEval, type EvalOptions, type EvalRun } from "./run";
+export {
+  median,
+  scoreFields,
+  summarise,
+  valuesMatch,
+  type DocumentResult,
+  type EvalOutcome,
+  type FieldResult,
+  type ModelSummary,
+} from "./score";

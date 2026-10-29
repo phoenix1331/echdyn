@@ -2,6 +2,7 @@
   "name": "echdyn",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Self-hosted document extraction with local LLMs.",
   "packageManager": "pnpm@10.17.0",
   "engines": {
@@ -20,7 +21,8 @@
     "db:migrate": "pnpm --filter @echdyn/core db:migrate",
     "db:fresh": "pnpm --filter @echdyn/core db:fresh && pnpm db:seed",
     "db:seed": "pnpm --filter @echdyn/core db:seed",
-    "eval:generate": "pnpm --filter @echdyn/core eval:generate"
+    "eval:generate": "pnpm --filter @echdyn/core eval:generate",
+    "eval": "pnpm --filter @echdyn/core eval"
   },
   "devDependencies": {
     "@echdyn/core": "workspace:*",
@@ -32,7 +34,6 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.13.0",
     "husky": "^9.1.7",
-    "postgres": "3.4.9",
     "prettier": "^3.9.10",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.1",
