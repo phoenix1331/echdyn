@@ -9,6 +9,7 @@ x-node: &node
     - pnpm_store:/pnpm/store
   environment: &node-env
     DATABASE_URL: postgres://${POSTGRES_USER:-echdyn}:${POSTGRES_PASSWORD:-echdyn}@postgres:5432/${POSTGRES_DB:-echdyn}
+    TEST_DATABASE_URL: postgres://${POSTGRES_USER:-echdyn}:${POSTGRES_PASSWORD:-echdyn}@postgres:5432/${POSTGRES_DB:-echdyn}_test
     REDIS_URL: redis://redis:6379
     S3_ENDPOINT: http://storage:9000
     S3_REGION: ${S3_REGION:-us-east-1}

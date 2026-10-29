@@ -15,9 +15,13 @@
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write . && eslint --fix .",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "pnpm --filter @echdyn/core db:generate",
+    "db:migrate": "pnpm --filter @echdyn/core db:migrate",
+    "db:fresh": "pnpm --filter @echdyn/core db:fresh"
   },
   "devDependencies": {
+    "@echdyn/core": "workspace:*",
     "@eslint/js": "^9.39.5",
     "@types/node": "^24.19.2",
     "@vitest/coverage-v8": "^5.0.5",
@@ -26,6 +30,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.13.0",
     "husky": "^9.1.7",
+    "postgres": "3.4.9",
     "prettier": "^3.9.10",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.1",
