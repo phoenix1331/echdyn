@@ -1,18 +1,9 @@
-import { createServer } from "node:http";
 import { loadConfig } from "@echdyn/core";
+import { createHealthServer } from "./health";
 
 const config = loadConfig();
 const healthPort = Number(process.env.WORKER_HEALTH_PORT ?? 3001);
-
-const server = createServer((req, res) => {
-  if (req.url !== "/health") {
-    res.writeHead(404).end();
-    return;
-  }
-
-  res.writeHead(200, { "content-type": "application/json" });
-  res.end(JSON.stringify({ status: "ok" }));
-});
+const server = createHealthServer();
 
 server.listen(healthPort, () => {
   console.log(`worker ready (health on :${healthPort}, ollama at ${config.OLLAMA_HOST})`);

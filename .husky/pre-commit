@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Linting
+echo "running prettier and eslint..."
+if ! pnpm lint; then
+  echo "error: linting failed. run pnpm format to fix formatting and autofixable issues."
+  exit 1
+fi
+
 # Type checking
 echo "running typecheck..."
 if ! pnpm typecheck; then

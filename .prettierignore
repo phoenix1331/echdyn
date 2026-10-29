@@ -1,0 +1,5 @@
+pnpm-lock.yaml
+coverage
+**/.next
+**/next-env.d.ts
+.claude
