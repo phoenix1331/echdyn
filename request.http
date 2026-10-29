@@ -1,0 +1,74 @@
+@baseUrl = http://localhost:8000
+
+### Health
+
+# Liveness check used by the Docker healthcheck
+GET {{baseUrl}}/api/health
+
+### Documents
+
+# Upload a PDF for extraction: returns 201 with the new document id and status "queued"
+POST {{baseUrl}}/api/documents
+Content-Type: multipart/form-data; boundary=echdyn
+
+--echdyn
+Content-Disposition: form-data; name="document_type"
+
+uk-energy-bill
+--echdyn
+Content-Disposition: form-data; name="file"; filename="sample-energy-bill.pdf"
+Content-Type: application/pdf
+
+< ./fixtures/sample-energy-bill.pdf
+--echdyn--
+
+###
+
+# Upload the same file again: returns 200 with the original document id and "duplicate": true
+POST {{baseUrl}}/api/documents
+Content-Type: multipart/form-data; boundary=echdyn
+
+--echdyn
+Content-Disposition: form-data; name="document_type"
+
+uk-energy-bill
+--echdyn
+Content-Disposition: form-data; name="file"; filename="sample-energy-bill-copy.pdf"
+Content-Type: application/pdf
+
+< ./fixtures/sample-energy-bill.pdf
+--echdyn--
+
+###
+
+# Unknown document type: returns 422 with error code "unknown_document_type"
+POST {{baseUrl}}/api/documents
+Content-Type: multipart/form-data; boundary=echdyn
+
+--echdyn
+Content-Disposition: form-data; name="document_type"
+
+invoice
+--echdyn
+Content-Disposition: form-data; name="file"; filename="sample-energy-bill.pdf"
+Content-Type: application/pdf
+
+< ./fixtures/sample-energy-bill.pdf
+--echdyn--
+
+###
+
+# Non-PDF content: returns 415 with error code "not_pdf"
+POST {{baseUrl}}/api/documents
+Content-Type: multipart/form-data; boundary=echdyn
+
+--echdyn
+Content-Disposition: form-data; name="document_type"
+
+uk-energy-bill
+--echdyn
+Content-Disposition: form-data; name="file"; filename="notes.txt"
+Content-Type: text/plain
+
+these are not the bills you are looking for
+--echdyn--
