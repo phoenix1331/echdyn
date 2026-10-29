@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/bin/migrate.ts",
-    "db:fresh": "tsx src/bin/migrate.ts --fresh"
+    "db:fresh": "tsx src/bin/migrate.ts --fresh",
+    "db:seed": "tsx src/bin/seed.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.4",
