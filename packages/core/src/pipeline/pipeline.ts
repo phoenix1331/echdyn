@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { Database } from "../db/client";
 import { documents, documentTypes } from "../db/schema";
+import type { Extraction } from "../extraction/extract";
 import type { Storage } from "../storage/storage";
 import type { PdfText } from "./stages/pre-process";
 import { transitionStatus } from "./status";
@@ -20,6 +21,8 @@ export interface PipelineContext {
   file: Uint8Array;
   /** Set by the pre-process stage */
   text?: PdfText;
+  /** Model runs so far, in order */
+  extractions: Extraction[];
   /** Final status when every stage succeeds; stages may promote it to "approved" */
   outcome: "needs_review" | "approved";
 }
@@ -59,7 +62,7 @@ async function loadContext(
     throw new PermanentPipelineError(`File ${row.document.storageKey} is missing from storage`);
   }
 
-  return { deps, ...row, file, outcome: "needs_review" };
+  return { deps, ...row, file, extractions: [], outcome: "needs_review" };
 }
 
 /**

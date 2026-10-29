@@ -4,3 +4,4 @@ export {
   preProcessStage,
   type PdfText,
 } from "./pre-process";
+export { createExtractStage } from "./extract";

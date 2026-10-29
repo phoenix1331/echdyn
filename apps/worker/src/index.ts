@@ -1,10 +1,12 @@
 import {
   createDatabase,
+  createExtractStage,
   createRedisConnection,
   createStorage,
   loadConfig,
   preProcessStage,
 } from "@echdyn/core";
+import { Ollama } from "ollama";
 import { createHealthServer } from "./health";
 import { createDocumentWorker } from "./worker";
 
@@ -22,7 +24,13 @@ if (await storage.ensureBucket()) {
 
 const worker = createDocumentWorker({
   deps: { db: database.db, storage },
-  stages: [preProcessStage],
+  stages: [
+    preProcessStage,
+    createExtractStage({
+      client: new Ollama({ host: config.OLLAMA_HOST }),
+      model: config.OLLAMA_TEXT_MODEL,
+    }),
+  ],
   connection,
   concurrency,
   log: (message) => {
@@ -41,7 +49,7 @@ const server = createHealthServer(() => worker.isRunning());
 
 server.listen(healthPort, () => {
   console.log(
-    `worker ready (concurrency ${concurrency}, health on :${healthPort}, ollama at ${config.OLLAMA_HOST})`,
+    `worker ready (concurrency ${concurrency}, health on :${healthPort}, ollama ${config.OLLAMA_TEXT_MODEL} at ${config.OLLAMA_HOST})`,
   );
 });
 
