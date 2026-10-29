@@ -1,6 +1,7 @@
 export { loadConfig, type Config } from "./config";
 export * from "./db";
 export * from "./document-types";
+export * from "./eval";
 export * from "./extraction";
 export * from "./ingest";
 export * from "./pipeline";

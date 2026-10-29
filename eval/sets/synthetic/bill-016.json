@@ -1,0 +1,19 @@
+{
+  "document_type": "uk-energy-bill",
+  "source": "synthetic",
+  "notes": "Northern Power Ltd, gas, 1 page",
+  "expected": {
+    "supplier": "Northern Power Ltd",
+    "account_number": "AC-1176821",
+    "meter_point_number": "31638402",
+    "billing_period_start": "2026-05-21",
+    "billing_period_end": "2026-06-22",
+    "consumption_kwh": 11571,
+    "unit_rate_pence": 10,
+    "standing_charge_pence_per_day": 20.64,
+    "subtotal_gbp": 1163.91,
+    "vat_rate_percent": 20,
+    "vat_gbp": 232.78,
+    "total_gbp": 1396.69
+  }
+}

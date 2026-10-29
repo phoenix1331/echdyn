@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help up down build restart ps shell logs install models typecheck lint test coverage migrate seed fresh
+.PHONY: help up down build restart ps shell logs install models typecheck lint test coverage migrate seed fresh eval-generate
 
 APP := web
 EXEC := docker compose exec $(APP)
@@ -57,3 +57,6 @@ seed: ## Seed the database
 
 fresh: ## Drop all tables, re-run migrations and seed
 	@$(EXEC) pnpm db:fresh
+
+eval-generate: ## Regenerate the synthetic labelled bill set in eval/sets/synthetic
+	@$(EXEC) pnpm eval:generate

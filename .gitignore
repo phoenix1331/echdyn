@@ -11,3 +11,6 @@ coverage/
 !.env.example
 
 .DS_Store
+
+# Real labelled documents stay on the machine that owns them
+eval/sets/private/

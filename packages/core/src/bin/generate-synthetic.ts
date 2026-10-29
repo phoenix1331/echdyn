@@ -1,0 +1,22 @@
+import { resolve } from "node:path";
+import { parseArgs } from "node:util";
+import { writeSyntheticSet } from "../eval";
+
+const { values } = parseArgs({
+  options: {
+    count: { type: "string", default: "30" },
+    seed: { type: "string", default: "1331" },
+    out: {
+      type: "string",
+      default: resolve(import.meta.dirname, "../../../../eval/sets/synthetic"),
+    },
+  },
+});
+
+const bills = await writeSyntheticSet({
+  count: Number(values.count),
+  seed: Number(values.seed),
+  outDir: resolve(values.out),
+});
+
+console.log(`wrote ${String(bills.length)} synthetic bills to ${resolve(values.out)}`);

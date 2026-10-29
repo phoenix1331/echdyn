@@ -1,0 +1,19 @@
+{
+  "document_type": "uk-energy-bill",
+  "source": "synthetic",
+  "notes": "Severn Valley Energy, electricity, 1 page",
+  "expected": {
+    "supplier": "Severn Valley Energy",
+    "account_number": "66014653",
+    "meter_point_number": "3454086833734",
+    "billing_period_start": "2026-03-23",
+    "billing_period_end": "2026-04-20",
+    "consumption_kwh": 3079,
+    "unit_rate_pence": 18.84,
+    "standing_charge_pence_per_day": 113.24,
+    "subtotal_gbp": 612.92,
+    "vat_rate_percent": 20,
+    "vat_gbp": 122.58,
+    "total_gbp": 735.5
+  }
+}

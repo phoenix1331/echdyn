@@ -1,0 +1,19 @@
+{
+  "document_type": "uk-energy-bill",
+  "source": "synthetic",
+  "notes": "Northern Power Ltd, electricity, 2 pages",
+  "expected": {
+    "supplier": "Northern Power Ltd",
+    "account_number": "58/159-442",
+    "meter_point_number": "1388016280884",
+    "billing_period_start": "2025-04-16",
+    "billing_period_end": "2025-05-18",
+    "consumption_kwh": 5512,
+    "unit_rate_pence": 33.95,
+    "standing_charge_pence_per_day": 30.37,
+    "subtotal_gbp": 1881.34,
+    "vat_rate_percent": 5,
+    "vat_gbp": 94.07,
+    "total_gbp": 1975.41
+  }
+}

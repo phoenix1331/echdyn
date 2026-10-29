@@ -19,7 +19,8 @@
     "db:generate": "pnpm --filter @echdyn/core db:generate",
     "db:migrate": "pnpm --filter @echdyn/core db:migrate",
     "db:fresh": "pnpm --filter @echdyn/core db:fresh && pnpm db:seed",
-    "db:seed": "pnpm --filter @echdyn/core db:seed"
+    "db:seed": "pnpm --filter @echdyn/core db:seed",
+    "eval:generate": "pnpm --filter @echdyn/core eval:generate"
   },
   "devDependencies": {
     "@echdyn/core": "workspace:*",
