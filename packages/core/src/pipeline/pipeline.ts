@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { Database } from "../db/client";
 import { documents, documentTypes } from "../db/schema";
 import type { Storage } from "../storage/storage";
+import type { PdfText } from "./stages/pre-process";
 import { transitionStatus } from "./status";
 
 export type Document = typeof documents.$inferSelect;
@@ -17,6 +18,8 @@ export interface PipelineContext {
   document: Document;
   documentType: DocumentTypeRow;
   file: Uint8Array;
+  /** Set by the pre-process stage */
+  text?: PdfText;
   /** Final status when every stage succeeds; stages may promote it to "approved" */
   outcome: "needs_review" | "approved";
 }

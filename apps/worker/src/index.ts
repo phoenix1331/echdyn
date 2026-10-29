@@ -1,4 +1,10 @@
-import { createDatabase, createRedisConnection, createStorage, loadConfig } from "@echdyn/core";
+import {
+  createDatabase,
+  createRedisConnection,
+  createStorage,
+  loadConfig,
+  preProcessStage,
+} from "@echdyn/core";
 import { createHealthServer } from "./health";
 import { createDocumentWorker } from "./worker";
 
@@ -16,7 +22,7 @@ if (await storage.ensureBucket()) {
 
 const worker = createDocumentWorker({
   deps: { db: database.db, storage },
-  stages: [],
+  stages: [preProcessStage],
   connection,
   concurrency,
   log: (message) => {

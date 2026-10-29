@@ -8,4 +8,5 @@ export {
   type PipelineLogger,
   type PipelineStage,
 } from "./pipeline";
+export * from "./stages";
 export { allowedTransitions, StatusTransitionError, transitionStatus } from "./status";
