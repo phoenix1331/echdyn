@@ -51,7 +51,7 @@ describe("proxy matcher", () => {
   const [pattern = ""] = config.matcher;
   const matches = (path: string) => new RegExp(`^${pattern}$`).test(path);
 
-  it.each(["/", "/documents", "/api/documents", "/api/healthcheck", "/login/extra"])(
+  it.each(["/", "/documents", "/api/documents", "/api/healthcheck", "/login/extra", "/report.pdf"])(
     "protects %s",
     (path) => {
       expect(matches(path)).toBe(true);
@@ -65,6 +65,8 @@ describe("proxy matcher", () => {
     "/_next/image",
     "/favicon.ico",
     "/next.svg",
+    "/echdyn-logo-white.png",
+    "/fonts/schibsted.woff2",
   ])("leaves %s public", (path) => {
     expect(matches(path)).toBe(false);
   });

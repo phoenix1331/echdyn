@@ -5,6 +5,7 @@ import type { PipelineStage } from "../pipeline";
 export function createExtractStage(settings: ExtractionSettings): PipelineStage {
   return {
     name: "extract",
+    label: "Extracting fields",
     async run(ctx) {
       // Scans have no text to send; the vision path handles them separately
       if (!ctx.text?.hasTextLayer) {

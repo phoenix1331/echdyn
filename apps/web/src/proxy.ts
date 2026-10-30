@@ -23,6 +23,9 @@ export function proxy(request: NextRequest): Response {
 }
 
 export const config = {
-  // Public: the Docker healthcheck, the login page and static assets
-  matcher: ["/((?!api/health$|login$|_next/static|_next/image|favicon\\.ico$|.*\\.svg$).*)"],
+  // Public: the Docker healthcheck, the login page and static assets. Files in public/
+  // (the logo on the login page) must load before anyone has signed in.
+  matcher: [
+    "/((?!api/health$|login$|_next/static|_next/image|.*\\.(?:png|jpe?g|gif|webp|avif|svg|ico|txt|woff2?)$).*)",
+  ],
 };

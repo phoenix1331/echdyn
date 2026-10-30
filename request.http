@@ -89,3 +89,11 @@ Content-Type: text/plain
 
 these are not the bills you are looking for
 --echdyn--
+
+###
+
+# Progress for one document: status, current stage, queue position and a time estimate.
+# Replace the id with one returned by an upload above
+GET {{baseUrl}}/api/documents/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{apiToken}}
+

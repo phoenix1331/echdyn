@@ -46,6 +46,7 @@ export async function extractPdfText(file: Uint8Array): Promise<PdfText> {
 
 export const preProcessStage: PipelineStage = {
   name: "pre-process",
+  label: "Reading PDF",
   async run(ctx) {
     let text: PdfText;
     try {

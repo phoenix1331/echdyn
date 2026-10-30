@@ -7,7 +7,12 @@ import { seedDocumentTypes } from "../document-types/seed";
 import { ingestDocument } from "../ingest/ingest";
 import type { DocumentQueue } from "../queue/queue";
 import { createStorage } from "../storage/storage";
-import { PermanentPipelineError, processDocument, type PipelineStage } from "./pipeline";
+import {
+  PermanentPipelineError,
+  processDocument,
+  stageLabels,
+  type PipelineStage,
+} from "./pipeline";
 import { transitionStatus } from "./status";
 
 const testUrl = process.env.TEST_DATABASE_URL;
@@ -23,6 +28,11 @@ describe.skipIf(!testUrl || !testBucket)("processDocument", () => {
   async function statusOf(id = documentId) {
     const [row] = await db.select().from(documents).where(eq(documents.id, id));
     return row?.status;
+  }
+
+  async function stageOf(id = documentId) {
+    const [row] = await db.select().from(documents).where(eq(documents.id, id));
+    return row?.stage;
   }
 
   beforeAll(async () => {
@@ -68,6 +78,32 @@ describe.skipIf(!testUrl || !testBucket)("processDocument", () => {
     expect(logs[0]).toMatch(new RegExp(`^${documentId} pre-process \\d+ms$`));
   });
 
+  it("records each stage's label while it runs and clears it at the end", async () => {
+    const seen: (string | null | undefined)[] = [];
+    const stage = (name: string, label?: string): PipelineStage => ({
+      name,
+      ...(label === undefined ? {} : { label }),
+      run: async () => {
+        seen.push(await stageOf());
+      },
+    });
+
+    await processDocument(deps, documentId, [
+      stage("pre-process", "Reading PDF"),
+      stage("extract", "Extracting fields"),
+      stage("extract", "Extracting fields"),
+      stage("custom"),
+    ]);
+
+    expect(seen).toEqual([
+      "Reading PDF",
+      "Extracting fields (run 1 of 2)",
+      "Extracting fields (run 2 of 2)",
+      "custom",
+    ]);
+    expect(await stageOf()).toBeNull();
+  });
+
   it("lets a stage auto-approve a clean document", async () => {
     const approve: PipelineStage = {
       name: "score",
@@ -108,5 +144,19 @@ describe.skipIf(!testUrl || !testBucket)("processDocument", () => {
     await storage.remove(row?.storageKey ?? "");
 
     await expect(processDocument(deps, documentId, [])).rejects.toThrow(/missing from storage/);
+  });
+});
+
+describe("stageLabels", () => {
+  const stage = (name: string, label?: string): PipelineStage => ({
+    name,
+    ...(label === undefined ? {} : { label }),
+    run: () => Promise.resolve(),
+  });
+
+  it("numbers repeated labels and falls back to the stage name", () => {
+    expect(
+      stageLabels([stage("a", "Reading"), stage("b", "Run"), stage("c", "Run"), stage("d")]),
+    ).toEqual(["Reading", "Run (run 1 of 2)", "Run (run 2 of 2)", "d"]);
   });
 });

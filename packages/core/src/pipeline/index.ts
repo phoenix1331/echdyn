@@ -1,6 +1,7 @@
 export {
   PermanentPipelineError,
   processDocument,
+  stageLabels,
   type Document,
   type DocumentTypeRow,
   type PipelineContext,

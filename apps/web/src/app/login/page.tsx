@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Suspense } from "react";
 import { safeRedirectPath } from "@/lib/auth";
 import { LoginForm } from "./login-form";
@@ -13,15 +14,38 @@ async function Form({ searchParams }: Pick<PageProps<"/login">, "searchParams">)
 
 export default function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
-    <main className="flex flex-1 items-center justify-center bg-zinc-50 px-4 dark:bg-black">
-      <div className="w-full max-w-sm rounded-lg border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-950">
-        <h1 className="mb-1 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">echdyn</h1>
-        <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">Sign in to review documents</p>
-        {/* Not a fallback form: one submitted before streaming finished would lose `next` */}
-        <Suspense fallback={<div className="h-56" aria-busy="true" />}>
-          <Form searchParams={searchParams} />
-        </Suspense>
-      </div>
-    </main>
+    <div className="flex flex-1 flex-col md:flex-row">
+      <section className="flex flex-col justify-between gap-10 bg-quarry px-8 py-10 text-on-quarry md:w-[42%] md:px-14 md:py-14">
+        <Image
+          src="/echdyn-logo-white.webp"
+          alt="echdyn"
+          width={800}
+          height={190}
+          priority
+          className="h-10 w-auto self-start"
+        />
+        <div className="max-w-sm">
+          <h1 className="text-3xl leading-tight font-semibold md:text-4xl">
+            Bills in. Checked figures out.
+          </h1>
+          <p className="mt-4 leading-relaxed text-on-quarry/75">
+            Every field is read by a model on this machine, checked against the bill&apos;s own
+            arithmetic, and marked for you when something does not add up.
+          </p>
+        </div>
+        <p className="hidden text-sm text-on-quarry/60 md:block">Nothing leaves your hardware.</p>
+      </section>
+
+      <main className="flex flex-1 items-center justify-center px-6 py-12">
+        <div className="w-full max-w-[22.5rem]">
+          <h2 className="text-2xl font-semibold text-ink">Sign in</h2>
+          <p className="mt-1 mb-8 text-muted">Use the admin account from your settings.</p>
+          {/* Not a fallback form: one submitted before streaming finished would lose `next` */}
+          <Suspense fallback={<div className="h-64" aria-busy="true" />}>
+            <Form searchParams={searchParams} />
+          </Suspense>
+        </div>
+      </main>
+    </div>
   );
 }

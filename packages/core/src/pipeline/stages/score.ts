@@ -53,6 +53,7 @@ export function scoreExtractions(runs: readonly Extraction[]): FieldError[] {
 export function createScoreStage(settings: ScoreSettings): PipelineStage {
   return {
     name: "score",
+    label: "Scoring",
     async run(ctx) {
       const [primary] = ctx.extractions;
 

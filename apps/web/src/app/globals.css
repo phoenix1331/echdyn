@@ -1,26 +1,100 @@
 @import "tailwindcss";
 
+/*
+ * Quarry slate and stone for the frame, white for the work surface, and one accent:
+ * highlighter yellow, kept for anything a person needs to check.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --stone: #f1f2f0;
+  --surface: #ffffff;
+  --line: #dadddb;
+  --ink: #1d252c;
+  --muted: #5d6872;
+  --quarry: #26313b;
+  --on-quarry: #f1f2f0;
+  --highlight: #f6e05e;
+  --highlight-soft: #fbf3c4;
+  --highlight-ink: #5c4a00;
+  --moss: #2f6b48;
+  --moss-soft: #e2efe6;
+  --brick: #a63a37;
+  --brick-soft: #f6e2e1;
+  --slate: #3f5f80;
+  --slate-soft: #e3eaf2;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --stone: #161c21;
+    --surface: #1d252c;
+    --line: #2f3a44;
+    --ink: #e6eaec;
+    --muted: #9aa6b0;
+    --quarry: #0f1418;
+    --on-quarry: #e6eaec;
+    --highlight: #e8d24f;
+    --highlight-soft: #3d3713;
+    --highlight-ink: #f3e7a3;
+    --moss: #8cc7a3;
+    --moss-soft: #1d3326;
+    --brick: #ef9a97;
+    --brick-soft: #3d2120;
+    --slate: #a9c2dc;
+    --slate-soft: #22303e;
   }
 }
 
+@theme inline {
+  --color-stone: var(--stone);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-quarry: var(--quarry);
+  --color-on-quarry: var(--on-quarry);
+  --color-highlight: var(--highlight);
+  --color-highlight-soft: var(--highlight-soft);
+  --color-highlight-ink: var(--highlight-ink);
+  --color-moss: var(--moss);
+  --color-moss-soft: var(--moss-soft);
+  --color-brick: var(--brick);
+  --color-brick-soft: var(--brick-soft);
+  --color-slate: var(--slate);
+  --color-slate-soft: var(--slate-soft);
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--stone);
+  color: var(--ink);
+}
+
+/* A highlighter pass over the stage label while a document is being processed */
+@keyframes highlighter {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.highlighter {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 35%,
+    var(--highlight-soft) 50%,
+    transparent 65%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: highlighter 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .highlighter {
+    animation: none;
+    background: var(--highlight-soft);
+  }
 }

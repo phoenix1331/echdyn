@@ -7,6 +7,7 @@ import { PermanentPipelineError, type PipelineStage } from "../pipeline";
 
 export const validateStage: PipelineStage = {
   name: "validate",
+  label: "Checking figures",
   async run(ctx) {
     const { slug, version } = ctx.documentType;
     const definition = getDocumentType(slug, version);

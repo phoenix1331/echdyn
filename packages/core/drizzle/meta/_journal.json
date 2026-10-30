@@ -15,6 +15,13 @@
       "when": 1793303164090,
       "tag": "0001_document_flags",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793380615059,
+      "tag": "0002_document-stage",
+      "breakpoints": true
     }
   ]
 }

@@ -29,6 +29,8 @@ export interface PipelineContext {
 
 export interface PipelineStage {
   name: string;
+  /** Shown to the user while the stage runs; defaults to `name` */
+  label?: string;
   run: (ctx: PipelineContext) => Promise<void>;
 }
 
@@ -40,6 +42,22 @@ export class PermanentPipelineError extends Error {
     super(message);
     this.name = "PermanentPipelineError";
   }
+}
+
+/** A label used more than once is numbered, so two extraction runs read "(run 1 of 2)" */
+export function stageLabels(stages: readonly PipelineStage[]): string[] {
+  const labels = stages.map((stage) => stage.label ?? stage.name);
+  const seen = new Map<string, number>();
+
+  return labels.map((label) => {
+    const total = labels.filter((l) => l === label).length;
+    if (total === 1) {
+      return label;
+    }
+    const run = (seen.get(label) ?? 0) + 1;
+    seen.set(label, run);
+    return `${label} (run ${String(run)} of ${String(total)})`;
+  });
 }
 
 async function loadContext(
@@ -82,7 +100,12 @@ export async function processDocument(
     await transitionStatus(deps.db, documentId, "extracting");
   }
 
-  for (const stage of stages) {
+  const labels = stageLabels(stages);
+  for (const [index, stage] of stages.entries()) {
+    await deps.db
+      .update(documents)
+      .set({ stage: labels[index] })
+      .where(eq(documents.id, documentId));
     const started = performance.now();
     await stage.run(ctx);
     log(`${documentId} ${stage.name} ${Math.round(performance.now() - started)}ms`);

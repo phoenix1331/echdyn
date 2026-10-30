@@ -62,6 +62,14 @@ describe.skipIf(!testUrl)("transitionStatus", () => {
     expect(await statusOf()).toEqual({ status: "queued", error: null });
   });
 
+  it("clears the progress stage on every transition", async () => {
+    await db.update(documents).set({ stage: "Reading PDF" }).where(eq(documents.id, documentId));
+    await transitionStatus(db, documentId, "extracting");
+
+    const [row] = await db.select().from(documents).where(eq(documents.id, documentId));
+    expect(row?.stage).toBeNull();
+  });
+
   it("refuses a transition the current status does not allow", async () => {
     await expect(transitionStatus(db, documentId, "approved")).rejects.toBeInstanceOf(
       StatusTransitionError,

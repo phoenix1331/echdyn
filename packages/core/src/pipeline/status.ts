@@ -40,7 +40,7 @@ export async function transitionStatus(
 ): Promise<void> {
   const rows = await db
     .update(documents)
-    .set({ status: to, error })
+    .set({ status: to, error, stage: null })
     .where(and(eq(documents.id, documentId), inArray(documents.status, sourcesFor(to))))
     .returning({ id: documents.id });
 
