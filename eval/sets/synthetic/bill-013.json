@@ -1,6 +1,7 @@
 {
   "document_type": "uk-energy-bill",
   "source": "synthetic",
+  "layout": "Northern Power Ltd",
   "notes": "Northern Power Ltd, electricity, 1 page",
   "expected": {
     "supplier": "Northern Power Ltd",

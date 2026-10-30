@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { PrintedUnit } from "../extraction/printed";
 import type { BusinessRule } from "../validation/rules";
 import { energyBill } from "./energy-bill";
 
@@ -8,6 +9,12 @@ export interface DocumentTypeDefinition<TSchema extends z.ZodObject = z.ZodObjec
   version: number;
   schema: TSchema;
   rules: readonly BusinessRule<z.infer<TSchema>>[];
+  extraction?: {
+    /** Appended to the system prompt: where to look and which look-alike values to ignore */
+    hints?: readonly string[];
+    /** Numeric fields whose printed values may be in another unit */
+    units?: Readonly<Partial<Record<keyof z.infer<TSchema> & string, PrintedUnit>>>;
+  };
 }
 
 export const documentTypeRegistry: readonly DocumentTypeDefinition[] = [energyBill];

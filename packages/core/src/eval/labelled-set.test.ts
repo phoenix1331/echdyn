@@ -46,7 +46,7 @@ describe("loadLabelledSet", () => {
 
   it("loads labels in name order, resolving the PDF beside each", async () => {
     await label("b", valid);
-    await label("a", { ...valid, notes: "scanned at an angle" });
+    await label("a", { ...valid, layout: "Octopus", notes: "scanned at an angle" });
 
     const docs = await loadLabelledSet(dir);
 
@@ -56,10 +56,12 @@ describe("loadLabelledSet", () => {
       pdfPath: join(dir, "a.pdf"),
       documentType: "uk-energy-bill",
       source: "real",
+      layout: "Octopus",
       notes: "scanned at an angle",
       expected,
     });
     expect(docs[1]).not.toHaveProperty("notes");
+    expect(docs[1]).not.toHaveProperty("layout");
   });
 
   it("honours an explicit file name", async () => {

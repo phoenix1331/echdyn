@@ -1,0 +1,2072 @@
+[
+  {
+    "id": "bill-001",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 77327,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "13346995",
+        "actual": "13346995",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "8798298888",
+        "actual": "8798298888",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-07-22",
+        "actual": "2025-07-22",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-08-20",
+        "actual": "2025-08-20",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 6083,
+        "actual": 6083,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 6.39,
+        "actual": 6.39,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 79.04,
+        "actual": 79.04,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 412.41,
+        "actual": 412.41,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 82.48,
+        "actual": 82.48,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 494.89,
+        "actual": 494.89,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-002",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 43097,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-7555673",
+        "actual": "AC-7555673",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "5272273799902",
+        "actual": "5272273799902",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-02-10",
+        "actual": "2026-02-10",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-03-13",
+        "actual": "2026-03-13",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 3942,
+        "actual": 3942,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 18.3,
+        "actual": 18.3,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 80.01,
+        "actual": 80.01,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 746.99,
+        "actual": 721.39,
+        "correct": false
+      },
+      "vat_rate_percent": {
+        "expected": 5,
+        "actual": 5,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 37.35,
+        "actual": 37.35,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 784.34,
+        "actual": 784.34,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-003",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 39334,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "55/841-593",
+        "actual": "55/841-593",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "2493913161789",
+        "actual": "2493913161789",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-12-20",
+        "actual": "2025-12-20",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-01-21",
+        "actual": "2026-01-21",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 5435,
+        "actual": 5435,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 21.38,
+        "actual": 21.38,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 77.41,
+        "actual": 77.41,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1187.55,
+        "actual": 1187.55,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 237.51,
+        "actual": 237.51,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1425.06,
+        "actual": 1425.06,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-004",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 40644,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-6425835",
+        "actual": "AC-6425835",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "8632618678078",
+        "actual": "8632618678078",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-12-03",
+        "actual": "2026-12-03",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2027-01-04",
+        "actual": "2027-01-04",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 4298,
+        "actual": 4298,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 33.57,
+        "actual": 33.57,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 41.88,
+        "actual": 41.88,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1456.66,
+        "actual": 1456.66,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 291.33,
+        "actual": 291.33,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1747.99,
+        "actual": 1747.99,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-005",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 38388,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "85/376-813",
+        "actual": "85/376-813",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "6100840054357",
+        "actual": "6100840054357",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-05-26",
+        "actual": "2025-05-26",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-06-28",
+        "actual": "2025-06-28",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 2318.1,
+        "actual": 2318.1,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 18.28,
+        "actual": 0.1828,
+        "correct": false
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 117.16,
+        "actual": 1.1716,
+        "correct": false
+      },
+      "subtotal_gbp": {
+        "expected": 463.58,
+        "actual": 423.75,
+        "correct": false
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 92.72,
+        "actual": 92.72,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 556.3,
+        "actual": 556.3,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-006",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 37107,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-9773126",
+        "actual": "AC-9773126",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "459354",
+        "actual": "459354",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-01-04",
+        "actual": "2025-01-04",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-02-03",
+        "actual": "2025-02-03",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 10675,
+        "actual": 10675,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 10.05,
+        "actual": 10.05,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 98.56,
+        "actual": 98.56,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1103.39,
+        "actual": 1103.39,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 5,
+        "actual": 5,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 55.17,
+        "actual": 55.17,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1158.56,
+        "actual": 1158.56,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-007",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "needs_review",
+    "durationMs": 41507,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "78126223",
+        "actual": "78126223",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "9616526089900",
+        "actual": "9616526089900",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-08-02",
+        "actual": "2026-08-02",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-08-29",
+        "actual": "2026-08-29",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 4855,
+        "actual": 4055,
+        "correct": false
+      },
+      "unit_rate_pence": {
+        "expected": 30.76,
+        "actual": 30.76,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 119.83,
+        "actual": 119.83,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1526.95,
+        "actual": 1526.95,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 5,
+        "actual": 5,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 76.35,
+        "actual": 76.35,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1603.3,
+        "actual": 1603.3,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-008",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 39684,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-1694306",
+        "actual": "AC-1694306",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "3925988558090",
+        "actual": "3925988558090",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-10-14",
+        "actual": "2026-10-14",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-11-12",
+        "actual": "2026-11-12",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 5585,
+        "actual": 5585,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 30.34,
+        "actual": 0.3034,
+        "correct": false
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 44.89,
+        "actual": 0.4489,
+        "correct": false
+      },
+      "subtotal_gbp": {
+        "expected": 1707.96,
+        "actual": 1670.96,
+        "correct": false
+      },
+      "vat_rate_percent": {
+        "expected": 5,
+        "actual": 5,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 85.4,
+        "actual": 85.4,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1793.36,
+        "actual": 1793.36,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-009",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 39980,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "36/621-170",
+        "actual": "36/621-170",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "3813569666",
+        "actual": "3813569666",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-10-22",
+        "actual": "2026-10-22",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-11-24",
+        "actual": "2026-11-24",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 2947,
+        "actual": 2947,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 7.57,
+        "actual": 7.57,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 92.49,
+        "actual": 92.49,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 254.54,
+        "actual": 254.54,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 50.91,
+        "actual": 50.91,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 305.45,
+        "actual": 305.45,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-010",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 45499,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "29619112",
+        "actual": "29619112",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "9759472332083",
+        "actual": "9759472332083",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-08-08",
+        "actual": "2026-08-08",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-09-10",
+        "actual": "2026-09-10",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 4740.1,
+        "actual": 4740.1,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 33.81,
+        "actual": 33.81,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 30.89,
+        "actual": 30.89,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1613.13,
+        "actual": 1613.13,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 322.63,
+        "actual": 322.63,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1935.76,
+        "actual": 1935.76,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-011",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 40562,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "66014653",
+        "actual": "66014653",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "3454086833734",
+        "actual": "3454086833734",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-03-23",
+        "actual": "2026-03-23",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-04-20",
+        "actual": "2026-04-20",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 3079,
+        "actual": 3079,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 18.84,
+        "actual": 0.1884,
+        "correct": false
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 113.24,
+        "actual": 1.1324,
+        "correct": false
+      },
+      "subtotal_gbp": {
+        "expected": 612.92,
+        "actual": 612.92,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 122.58,
+        "actual": 122.58,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 735.5,
+        "actual": 735.5,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-012",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 36548,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "77113549",
+        "actual": "77113549",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "2852344276",
+        "actual": "2852344276",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-05-04",
+        "actual": "2025-05-04",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-06-02",
+        "actual": "2025-06-02",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 7967,
+        "actual": 7967,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 8.28,
+        "actual": 8.28,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 86.69,
+        "actual": 86.69,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 685.68,
+        "actual": 685.68,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 137.14,
+        "actual": 137.14,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 822.82,
+        "actual": 822.82,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-013",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 39411,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "38410917",
+        "actual": "38410917",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "7932991357671",
+        "actual": "7932991357671",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-08-06",
+        "actual": "2025-08-06",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-09-07",
+        "actual": "2025-09-07",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 960,
+        "actual": 960,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 30.45,
+        "actual": 30.45,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 25.72,
+        "actual": 25.72,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 300.81,
+        "actual": 300.81,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 5,
+        "actual": 5,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 15.04,
+        "actual": 15.04,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 315.85,
+        "actual": 315.85,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-014",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 42645,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "44/111-690",
+        "actual": "44/111-690",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "167205",
+        "actual": "167205",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-08-11",
+        "actual": "2025-08-11",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-09-14",
+        "actual": "2025-09-14",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 8495,
+        "actual": 8495,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 6.23,
+        "actual": 6.23,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 99.71,
+        "actual": 99.71,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 564.14,
+        "actual": 529.24,
+        "correct": false
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 112.83,
+        "actual": 112.83,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 676.97,
+        "actual": 676.97,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-015",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 45266,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "97579287",
+        "actual": "97579287",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "5319127107852",
+        "actual": "5319127107852",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-04-13",
+        "actual": "2025-04-13",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-05-13",
+        "actual": "2025-05-13",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 4892,
+        "actual": 4892,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 28.52,
+        "actual": 28.52,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 88,
+        "actual": 88,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1422.48,
+        "actual": 1422.48,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 284.5,
+        "actual": 284.5,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1706.98,
+        "actual": 1706.98,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-016",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 37019,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-1176821",
+        "actual": "AC-1176821",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "31638402",
+        "actual": "31638402",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-05-21",
+        "actual": "2026-05-21",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-06-22",
+        "actual": "2026-06-22",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 11571,
+        "actual": 11571,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 10,
+        "actual": 10,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 20.64,
+        "actual": 20.64,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1163.91,
+        "actual": 1163.91,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 232.78,
+        "actual": 232.78,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1396.69,
+        "actual": 1396.69,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-017",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 42377,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "51/596-940",
+        "actual": "51/596-940",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "8455252433999",
+        "actual": "8455252433999",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-07-14",
+        "actual": "2025-07-14",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-08-14",
+        "actual": "2025-08-14",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 322.9,
+        "actual": 322.9,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 30.09,
+        "actual": 30.09,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 96.04,
+        "actual": 96.04,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 127.89,
+        "actual": 97.16,
+        "correct": false
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 25.58,
+        "actual": 25.58,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 153.47,
+        "actual": 153.47,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-018",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 37331,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "77562104",
+        "actual": "77562104",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "732516423",
+        "actual": "732516423",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-03-18",
+        "actual": "2026-03-18",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-04-16",
+        "actual": "2026-04-16",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 6511,
+        "actual": 6511,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 8.12,
+        "actual": 8.12,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 91.79,
+        "actual": 91.79,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 556.23,
+        "actual": 556.23,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 111.25,
+        "actual": 111.25,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 667.48,
+        "actual": 667.48,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-019",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 38907,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "70063048",
+        "actual": "70063048",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "2612742146",
+        "actual": "2612742146",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-02-02",
+        "actual": "2026-02-02",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-03-04",
+        "actual": "2026-03-04",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 4240,
+        "actual": 4240,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 8.02,
+        "actual": 8.02,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 78.82,
+        "actual": 78.82,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 364.48,
+        "actual": 364.48,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 72.9,
+        "actual": 72.9,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 437.38,
+        "actual": 437.38,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-020",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 38208,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "70722535",
+        "actual": "70722535",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "5961874654930",
+        "actual": "5961874654930",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-03-11",
+        "actual": "2026-03-11",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-04-08",
+        "actual": "2026-04-08",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 5270,
+        "actual": 5270,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 30.54,
+        "actual": 0.3054,
+        "correct": false
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 118.65,
+        "actual": 1.1865,
+        "correct": false
+      },
+      "subtotal_gbp": {
+        "expected": 1643.87,
+        "actual": 1634.87,
+        "correct": false
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 328.77,
+        "actual": 328.77,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1972.64,
+        "actual": 1972.64,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-021",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 37308,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-2041684",
+        "actual": "AC-2041684",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "2176491292",
+        "actual": "2176491292",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-09-06",
+        "actual": "2026-09-06",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-10-10",
+        "actual": "2026-10-10",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 9813,
+        "actual": 9813,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 6.24,
+        "actual": 6.24,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 77.59,
+        "actual": 77.59,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 639.49,
+        "actual": 639.49,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 127.9,
+        "actual": 127.9,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 767.39,
+        "actual": 767.39,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-022",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 42220,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "43427410",
+        "actual": "43427410",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "2157571295950",
+        "actual": "2157571295950",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-02-28",
+        "actual": "2026-02-28",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-03-27",
+        "actual": "2026-03-27",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 2143,
+        "actual": 2143,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 22.31,
+        "actual": 22.31,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 26.14,
+        "actual": 26.14,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 485.42,
+        "actual": 485.42,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 97.08,
+        "actual": 97.08,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 582.5,
+        "actual": 582.5,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-023",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 43577,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-2198067",
+        "actual": "AC-2198067",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "3504677",
+        "actual": "3504677",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-04-24",
+        "actual": "2026-04-24",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-05-24",
+        "actual": "2026-05-24",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 5661,
+        "actual": 5661,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 11.05,
+        "actual": 0.1105,
+        "correct": false
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 85.97,
+        "actual": 0.8597,
+        "correct": false
+      },
+      "subtotal_gbp": {
+        "expected": 652.19,
+        "actual": 652.19,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 130.44,
+        "actual": 130.44,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 782.63,
+        "actual": 782.63,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-024",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 37126,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "87146970",
+        "actual": "87146970",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "4495595932466",
+        "actual": "4495595932466",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-09-10",
+        "actual": "2026-09-10",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-10-09",
+        "actual": "2026-10-09",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 2624.9,
+        "actual": 2624.9,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 22.39,
+        "actual": 22.39,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 84.99,
+        "actual": 84.99,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 613.22,
+        "actual": 613.22,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 122.64,
+        "actual": 122.64,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 735.86,
+        "actual": 735.86,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-025",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 38224,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-4494909",
+        "actual": "AC-4494909",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "45287502",
+        "actual": "45287502",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-01-18",
+        "actual": "2026-01-18",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-02-16",
+        "actual": "2026-02-16",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 14136,
+        "actual": 14136,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 5.75,
+        "actual": 5.75,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 102.12,
+        "actual": 102.12,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 843.46,
+        "actual": 843.46,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 168.69,
+        "actual": 168.69,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1012.15,
+        "actual": 1012.15,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-026",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 42121,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "82/237-373",
+        "actual": "82/237-373",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "34156732",
+        "actual": "34156732",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-05-16",
+        "actual": "2026-05-16",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-06-13",
+        "actual": "2026-06-13",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 3662,
+        "actual": 3662,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 9.69,
+        "actual": 0.0969,
+        "correct": false
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 60.61,
+        "actual": 0.6061,
+        "correct": false
+      },
+      "subtotal_gbp": {
+        "expected": 372.43,
+        "actual": 354.85,
+        "correct": false
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 74.49,
+        "actual": 74.49,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 446.92,
+        "actual": 446.92,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-027",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 38652,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "AC-6198113",
+        "actual": "AC-6198113",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "581656",
+        "actual": "581656",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-10-07",
+        "actual": "2025-10-07",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-11-07",
+        "actual": "2025-11-07",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 6325,
+        "actual": 6325,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 7.5,
+        "actual": 7.5,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 30.39,
+        "actual": 30.39,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 484.1,
+        "actual": 484.1,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 5,
+        "actual": 5,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 24.21,
+        "actual": 24.21,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 508.31,
+        "actual": 508.31,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-028",
+    "model": "llama3.2",
+    "layout": "Northern Power Ltd",
+    "outcome": "approved",
+    "durationMs": 42568,
+    "fields": {
+      "supplier": {
+        "expected": "Northern Power Ltd",
+        "actual": "Northern Power Ltd",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "58/159-442",
+        "actual": "58/159-442",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "1388016280884",
+        "actual": "1388016280884",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-04-16",
+        "actual": "2025-04-16",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-05-18",
+        "actual": "2025-05-18",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 5512,
+        "actual": 5512,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 33.95,
+        "actual": 33.95,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 30.37,
+        "actual": 30.37,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1881.34,
+        "actual": 1881.34,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 5,
+        "actual": 5,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 94.07,
+        "actual": 94.07,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1975.41,
+        "actual": 1975.41,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-029",
+    "model": "llama3.2",
+    "layout": "Severn Valley Energy",
+    "outcome": "needs_review",
+    "durationMs": 42089,
+    "fields": {
+      "supplier": {
+        "expected": "Severn Valley Energy",
+        "actual": "SEVERN VALLEY ENERGY",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "53/862-159",
+        "actual": "53/862-159",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "1128192879036",
+        "actual": "1128192879036",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2025-09-28",
+        "actual": "2025-09-28",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2025-10-31",
+        "actual": "2025-10-31",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 3217.7,
+        "actual": 3217.7,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 32.27,
+        "actual": 0.3227,
+        "correct": false
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 91.36,
+        "actual": 0.9136,
+        "correct": false
+      },
+      "subtotal_gbp": {
+        "expected": 1069.41,
+        "actual": 1038.35,
+        "correct": false
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 213.88,
+        "actual": 213.88,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1283.29,
+        "actual": 1283.29,
+        "correct": true
+      }
+    }
+  },
+  {
+    "id": "bill-030",
+    "model": "llama3.2",
+    "layout": "Cymru Gas & Power",
+    "outcome": "approved",
+    "durationMs": 38150,
+    "fields": {
+      "supplier": {
+        "expected": "Cymru Gas & Power",
+        "actual": "Cymru Gas & Power",
+        "correct": true
+      },
+      "account_number": {
+        "expected": "22551658",
+        "actual": "22551658",
+        "correct": true
+      },
+      "meter_point_number": {
+        "expected": "187623",
+        "actual": "187623",
+        "correct": true
+      },
+      "billing_period_start": {
+        "expected": "2026-04-12",
+        "actual": "2026-04-12",
+        "correct": true
+      },
+      "billing_period_end": {
+        "expected": "2026-05-12",
+        "actual": "2026-05-12",
+        "correct": true
+      },
+      "consumption_kwh": {
+        "expected": 13859,
+        "actual": 13859,
+        "correct": true
+      },
+      "unit_rate_pence": {
+        "expected": 10.67,
+        "actual": 10.67,
+        "correct": true
+      },
+      "standing_charge_pence_per_day": {
+        "expected": 78.45,
+        "actual": 78.45,
+        "correct": true
+      },
+      "subtotal_gbp": {
+        "expected": 1503.08,
+        "actual": 1503.08,
+        "correct": true
+      },
+      "vat_rate_percent": {
+        "expected": 20,
+        "actual": 20,
+        "correct": true
+      },
+      "vat_gbp": {
+        "expected": 300.62,
+        "actual": 300.62,
+        "correct": true
+      },
+      "total_gbp": {
+        "expected": 1803.7,
+        "actual": 1803.7,
+        "correct": true
+      }
+    }
+  }
+]

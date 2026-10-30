@@ -109,4 +109,22 @@ export const energyBill: DocumentTypeDefinition<typeof energyBillSchema> = {
   version: 1,
   schema: energyBillSchema,
   rules: energyBillRules,
+  extraction: {
+    // Each hint answers a look-alike value the eval caught the model taking instead
+    hints: [
+      "The supplier is the energy company that issued the bill, usually named at the top. It is never the customer being billed.",
+      "The account number is the customer account or reference number. It is never the MPAN, MPRN or supply number.",
+      "The meter point number is the MPAN, MPRN or supply number. It is never a meter reading.",
+      "Consumption is the kWh charged for in this period, on the energy charge line. Ignore meter readings, gas volumes in m3 and usage history.",
+      "The VAT amount is the money on the VAT line. It is not the VAT rate and not the total.",
+      "Ignore previous balances, opening balances and payments received.",
+    ],
+    units: {
+      unit_rate_pence: "pence",
+      standing_charge_pence_per_day: "pence",
+      subtotal_gbp: "pounds",
+      vat_gbp: "pounds",
+      total_gbp: "pounds",
+    },
+  },
 };

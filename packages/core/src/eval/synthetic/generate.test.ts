@@ -59,5 +59,8 @@ describe("writeSyntheticSet", () => {
     expect(loaded.map((d) => d.id)).toEqual(["bill-001", "bill-002", "bill-003", "bill-004"]);
     expect(loaded.map((d) => d.expected)).toEqual(written.map((w) => w.label.expected));
     expect(loaded[0]).toMatchObject({ source: "synthetic", documentType: "uk-energy-bill" });
+    expect(new Set(loaded.map((d) => d.layout))).toEqual(
+      new Set(["Northern Power Ltd", "Severn Valley Energy", "Cymru Gas & Power"]),
+    );
   });
 });

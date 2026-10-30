@@ -8,6 +8,8 @@ export const labelSchema = z.object({
   /** PDF next to the label; defaults to the label's name with .pdf */
   file: z.string().min(1).optional(),
   source: z.enum(["synthetic", "real"]),
+  /** Supplier template or similar, so accuracy can be broken down by layout */
+  layout: z.string().min(1).optional(),
   notes: z.string().optional(),
   expected: z.record(z.string(), z.unknown()),
 });
@@ -19,6 +21,7 @@ export interface LabelledDocument {
   pdfPath: string;
   documentType: string;
   source: Label["source"];
+  layout?: string;
   notes?: string;
   expected: Record<string, unknown>;
 }
@@ -85,6 +88,7 @@ export async function loadLabelledSet(dir: string): Promise<LabelledDocument[]> 
       pdfPath,
       documentType: label.data.document_type,
       source: label.data.source,
+      ...(label.data.layout === undefined ? {} : { layout: label.data.layout }),
       ...(label.data.notes === undefined ? {} : { notes: label.data.notes }),
       expected: label.data.expected,
     });

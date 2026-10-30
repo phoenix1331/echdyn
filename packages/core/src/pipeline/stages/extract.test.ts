@@ -47,9 +47,9 @@ describe.skipIf(!testUrl || !testBucket)("extract stage", () => {
     return id;
   }
 
-  it("extracts a text document with the stored JSON Schema and numbers each run", async () => {
+  it("extracts a text document with the printed schema and type hints, numbering each run", async () => {
     const id = await upload("sample-energy-bill.pdf");
-    const client = fakeClient(['{"total_gbp": 386.88}', '{"total_gbp": 386.88}']);
+    const client = fakeClient(['{"total_gbp": "£386.88"}', '{"total_gbp": "386.88"}']);
     const extract = createExtractStage({ client, model: "llama3.2" });
     let runs: PipelineContext["extractions"] = [];
     const capture = {
@@ -63,9 +63,14 @@ describe.skipIf(!testUrl || !testBucket)("extract stage", () => {
     await processDocument({ db, storage }, id, [preProcessStage, extract, extract, capture]);
 
     expect(runs.map((r) => r.runNumber)).toEqual([1, 2]);
+    expect(runs.map((r) => r.parsed)).toEqual([{ total_gbp: 386.88 }, { total_gbp: 386.88 }]);
+    expect(client.requests[0]?.messages?.[0]?.content).toContain("never the customer being billed");
     expect(client.requests[0]?.messages?.[1]?.content).toContain("Northern Power Ltd");
     expect(client.requests[0]?.format).toMatchObject({
       required: expect.arrayContaining(["total_gbp", "meter_point_number"]) as unknown,
+      properties: expect.objectContaining({
+        total_gbp: expect.objectContaining({ type: "string" }) as unknown,
+      }) as unknown,
     });
     expect(await db.select().from(extractions).where(eq(extractions.documentId, id))).toHaveLength(
       2,

@@ -11,10 +11,19 @@ export interface FieldResult {
 export interface DocumentResult {
   id: string;
   model: string;
+  /** The label's layout, or its source when it has none */
+  layout: string;
   outcome: EvalOutcome;
   durationMs: number;
   fields: Record<string, FieldResult>;
   error?: string;
+}
+
+export interface LayoutSummary {
+  documents: number;
+  fieldAccuracy: number;
+  documentAccuracy: number;
+  flaggedShare: number;
 }
 
 export interface ModelSummary {
@@ -31,6 +40,8 @@ export interface ModelSummary {
   approvedWithErrors: number;
   failed: number;
   medianDurationMs: number;
+  /** Shows which templates a model struggles with, which overall accuracy hides */
+  byLayout: Record<string, LayoutSummary>;
 }
 
 /** Exact match, except text ignores case and surrounding whitespace (logos are often in capitals) */
@@ -69,28 +80,42 @@ export function median(values: readonly number[]): number {
 }
 
 const share = (count: number, total: number) => (total === 0 ? 0 : count / total);
+const allCorrect = (r: DocumentResult) => Object.values(r.fields).every((f) => f.correct);
+
+function summariseLayout(results: readonly DocumentResult[]): LayoutSummary {
+  const fieldResults = results.flatMap((r) => Object.values(r.fields));
+  return {
+    documents: results.length,
+    fieldAccuracy: share(fieldResults.filter((f) => f.correct).length, fieldResults.length),
+    documentAccuracy: share(results.filter(allCorrect).length, results.length),
+    flaggedShare: share(results.filter((r) => r.outcome === "needs_review").length, results.length),
+  };
+}
 
 export function summarise(model: string, results: readonly DocumentResult[]): ModelSummary {
   const fieldResults = results.flatMap((r) => Object.entries(r.fields));
   const fieldNames = [...new Set(fieldResults.map(([field]) => field))];
-  const allCorrect = (r: DocumentResult) => Object.values(r.fields).every((f) => f.correct);
   const approved = results.filter((r) => r.outcome === "approved");
+  const layouts = [...new Set(results.map((r) => r.layout))].sort();
 
   return {
     model,
-    documents: results.length,
-    fieldAccuracy: share(fieldResults.filter(([, f]) => f.correct).length, fieldResults.length),
-    documentAccuracy: share(results.filter(allCorrect).length, results.length),
+    ...summariseLayout(results),
     accuracyByField: Object.fromEntries(
       fieldNames.map((name) => {
         const forField = fieldResults.filter(([field]) => field === name);
         return [name, share(forField.filter(([, f]) => f.correct).length, forField.length)];
       }),
     ),
-    flaggedShare: share(results.filter((r) => r.outcome === "needs_review").length, results.length),
     autoApproved: approved.length,
     approvedWithErrors: approved.filter((r) => !allCorrect(r)).length,
     failed: results.filter((r) => r.outcome === "failed").length,
     medianDurationMs: median(results.map((r) => r.durationMs)),
+    byLayout: Object.fromEntries(
+      layouts.map((layout) => [
+        layout,
+        summariseLayout(results.filter((r) => r.layout === layout)),
+      ]),
+    ),
   };
 }

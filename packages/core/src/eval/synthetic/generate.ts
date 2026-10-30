@@ -42,6 +42,7 @@ export async function generateSyntheticBills({
       label: {
         document_type: energyBill.slug,
         source: "synthetic",
+        layout: layout.supplier,
         notes: `${layout.supplier}, ${bill.fuel}, ${String(pages.length)} page${pages.length > 1 ? "s" : ""}`,
         expected: bill.expected,
       },

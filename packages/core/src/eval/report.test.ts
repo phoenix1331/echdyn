@@ -1,3 +1,4 @@
+import { format, resolveConfig } from "prettier";
 import { describe, expect, it } from "vitest";
 import { renderReport } from "./report";
 import type { ModelSummary } from "./score";
@@ -13,6 +14,14 @@ const summary = (model: string, accuracy: number): ModelSummary => ({
   approvedWithErrors: 1,
   failed: 0,
   medianDurationMs: 64_300,
+  byLayout: {
+    "Severn Valley Energy": {
+      documents: 10,
+      fieldAccuracy: accuracy - 0.1,
+      documentAccuracy: 0.2,
+      flaggedShare: 0.8,
+    },
+  },
 });
 
 describe("renderReport", () => {
@@ -21,6 +30,8 @@ describe("renderReport", () => {
     promptVersion: "text-v1",
     sets: [{ name: "synthetic", documents: 30 }],
   });
+  // Table cells are padded, so compare content with runs of spaces collapsed
+  const compact = report.replace(/ {2,}/g, " ").replace(/-{3,}/g, "---");
 
   it("states what was measured and how", () => {
     expect(report).toContain(
@@ -29,13 +40,27 @@ describe("renderReport", () => {
   });
 
   it("has one summary row per model", () => {
-    expect(report).toContain("| llama3.2 | 91.7% | 50.0% | 40.0% | 1 of 18 | 0 | 64.3 s |");
-    expect(report).toContain("| qwen3:8b | 98.0% |");
+    expect(compact).toContain("| llama3.2 | 91.7% | 50.0% | 40.0% | 1 of 18 | 0 | 64.3 s |");
+    expect(compact).toContain("| qwen3:8b | 98.0% |");
   });
 
   it("has a per-field table with a column per model", () => {
-    expect(report).toContain("| Field | llama3.2 | qwen3:8b |");
-    expect(report).toContain("| `vat_gbp` | 91.7% | 98.0% |");
+    expect(compact).toContain("| Field | llama3.2 | qwen3:8b |");
+    expect(compact).toContain("| `vat_gbp` | 91.7% | 98.0% |");
+  });
+
+  it("breaks accuracy down by layout for each model", () => {
+    expect(compact).toContain(
+      "| Layout | Model | Documents | Field accuracy | Documents fully correct | Flagged |",
+    );
+    expect(compact).toContain("| Severn Valley Energy | llama3.2 | 10 | 81.7% | 20.0% | 80.0% |");
+    expect(compact).toContain("| Severn Valley Energy | qwen3:8b | 10 | 88.0% |");
     expect(report.endsWith("\n")).toBe(true);
+  });
+
+  it("is already formatted the way Prettier would write it", async () => {
+    const options = (await resolveConfig(import.meta.filename)) ?? {};
+
+    expect(await format(report, { ...options, parser: "markdown" })).toBe(report);
   });
 });

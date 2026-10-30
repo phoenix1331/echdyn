@@ -50,9 +50,11 @@ describe("summarise", () => {
     a: boolean,
     b: boolean,
     durationMs: number,
+    layout = "x",
   ): DocumentResult => ({
     id: "d",
     model: "m",
+    layout,
     outcome,
     durationMs,
     fields: { a: field(a), b: field(b) },
@@ -62,8 +64,8 @@ describe("summarise", () => {
     const summary = summarise("m", [
       doc("approved", true, true, 1000),
       doc("approved", true, false, 3000),
-      doc("needs_review", false, true, 2000),
-      doc("failed", false, false, 500),
+      doc("needs_review", false, true, 2000, "y"),
+      doc("failed", false, false, 500, "y"),
     ]);
 
     expect(summary).toEqual({
@@ -77,10 +79,19 @@ describe("summarise", () => {
       approvedWithErrors: 1,
       failed: 1,
       medianDurationMs: 1500,
+      byLayout: {
+        x: { documents: 2, fieldAccuracy: 3 / 4, documentAccuracy: 1 / 2, flaggedShare: 0 },
+        y: { documents: 2, fieldAccuracy: 1 / 4, documentAccuracy: 0, flaggedShare: 1 / 2 },
+      },
     });
   });
 
   it("handles an empty run", () => {
-    expect(summarise("m", [])).toMatchObject({ documents: 0, fieldAccuracy: 0, flaggedShare: 0 });
+    expect(summarise("m", [])).toMatchObject({
+      documents: 0,
+      fieldAccuracy: 0,
+      flaggedShare: 0,
+      byLayout: {},
+    });
   });
 });

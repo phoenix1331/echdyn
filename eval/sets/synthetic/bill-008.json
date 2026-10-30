@@ -1,6 +1,7 @@
 {
   "document_type": "uk-energy-bill",
   "source": "synthetic",
+  "layout": "Severn Valley Energy",
   "notes": "Severn Valley Energy, electricity, 1 page",
   "expected": {
     "supplier": "Severn Valley Energy",

@@ -15,6 +15,7 @@ Ground truth for measuring extraction accuracy. Each set is a directory of PDFs,
 {
   "document_type": "uk-energy-bill",
   "source": "real",
+  "layout": "Northern Power Ltd",
   "notes": "Scanned, slight skew",
   "expected": {
     "supplier": "Northern Power Ltd",
@@ -39,6 +40,7 @@ Ground truth for measuring extraction accuracy. Each set is a directory of PDFs,
 | `source`        | Yes      | `synthetic` or `real`                                                                           |
 | `expected`      | Yes      | Hand-checked values in the schema's units (money in pounds, rates in pence, dates `YYYY-MM-DD`) |
 | `file`          | No       | PDF name if it differs from the label's name                                                    |
+| `layout`        | No       | Supplier template or similar; the report breaks accuracy down by it (defaults to `source`)      |
 | `notes`         | No       | Anything that explains a hard case                                                              |
 
 Labels are validated against the document type's schema when loaded, so a typo in ground truth fails loudly rather than quietly lowering measured accuracy.
@@ -51,4 +53,4 @@ Labels are validated against the document type's schema when loaded, so a typo i
 
 ## Synthetic bills
 
-Three supplier layouts with different labels, date formats (`01/08/2026`, `1 August 2026`, `01-Aug-26`) and units (one quotes rates in £/kWh, which the model must convert to pence). Bills mix electricity (valid MPAN check digits) and gas (volume to kWh conversion lines), 5% and 20% VAT, and include distractor figures: previous balances, payments, meter readings and a 12-month usage page on some bills. Every label passes the document type's business rules.
+Three supplier layouts with different labels, date formats (`01/08/2026`, `1 August 2026`, `01-Aug-26`) and units (one quotes rates in £/kWh, which must end up in pence). Bills mix electricity (valid MPAN check digits) and gas (volume to kWh conversion lines), 5% and 20% VAT, and include distractor figures: previous balances, payments, meter readings and a 12-month usage page on some bills. Every label passes the document type's business rules.

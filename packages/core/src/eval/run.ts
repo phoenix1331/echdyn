@@ -77,6 +77,7 @@ export async function runEval({
       const result: DocumentResult = {
         id: labelled.id,
         model,
+        layout: labelled.layout ?? labelled.source,
         outcome,
         durationMs,
         fields: scoreFields(labelled.expected, primary?.parsed ?? null),

@@ -9,17 +9,33 @@ export interface ReportMeta {
 const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
 const seconds = (ms: number) => `${(ms / 1000).toFixed(1)} s`;
 
+// Columns padded to their widest cell, as Prettier formats them, so the committed report
+// passes the pre-commit format check without a separate formatting step
 function table(header: string[], rows: string[][]): string {
-  return [
-    `| ${header.join(" | ")} |`,
-    `| ${header.map(() => "---").join(" | ")} |`,
-    ...rows.map((row) => `| ${row.join(" | ")} |`),
-  ].join("\n");
+  const widths = header.map((cell, i) =>
+    Math.max(3, cell.length, ...rows.map((row) => row[i]?.length ?? 0)),
+  );
+  const line = (cells: string[]) =>
+    `| ${widths.map((width, i) => (cells[i] ?? "").padEnd(width)).join(" | ")} |`;
+
+  return [line(header), line(widths.map((width) => "-".repeat(width))), ...rows.map(line)].join(
+    "\n",
+  );
 }
 
 export function renderReport(summaries: readonly ModelSummary[], meta: ReportMeta): string {
   const sets = meta.sets.map((s) => `${s.name} (${String(s.documents)} documents)`).join(", ");
   const fields = [...new Set(summaries.flatMap((s) => Object.keys(s.accuracyByField)))];
+  const layoutRows = summaries.flatMap((s) =>
+    Object.entries(s.byLayout).map(([layout, l]) => [
+      layout,
+      s.model,
+      String(l.documents),
+      percent(l.fieldAccuracy),
+      percent(l.documentAccuracy),
+      percent(l.flaggedShare),
+    ]),
+  );
 
   return `${[
     "# Evaluation results",
@@ -52,6 +68,11 @@ export function renderReport(summaries: readonly ModelSummary[], meta: ReportMet
         `\`${field}\``,
         ...summaries.map((s) => percent(s.accuracyByField[field] ?? 0)),
       ]),
+    ),
+    "## Accuracy by layout",
+    table(
+      ["Layout", "Model", "Documents", "Field accuracy", "Documents fully correct", "Flagged"],
+      layoutRows,
     ),
   ].join("\n\n")}\n`;
 }

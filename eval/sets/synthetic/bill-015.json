@@ -1,6 +1,7 @@
 {
   "document_type": "uk-energy-bill",
   "source": "synthetic",
+  "layout": "Cymru Gas & Power",
   "notes": "Cymru Gas & Power, electricity, 2 pages",
   "expected": {
     "supplier": "Cymru Gas & Power",

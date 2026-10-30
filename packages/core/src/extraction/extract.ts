@@ -2,6 +2,7 @@ import type { ChatRequest, ChatResponse } from "ollama";
 import type { Database } from "../db/client";
 import { firstRow } from "../db/rows";
 import { extractions, type FieldError } from "../db/schema";
+import { normalisePrinted, toPrintedSchema, type PrintedUnit } from "./printed";
 import { buildTextPrompt, PROMPT_VERSION } from "./prompt";
 
 export type Extraction = typeof extractions.$inferSelect;
@@ -14,9 +15,14 @@ export interface ChatClient {
 export interface TextExtractionInput {
   documentId: string;
   documentTypeName: string;
+  /** The stored record schema; the model is sent its printed form */
   jsonSchema: Record<string, unknown>;
   pages: readonly string[];
   runNumber: number;
+  /** Document type specific lines appended to the system prompt */
+  hints?: readonly string[];
+  /** Fields whose printed values may be in another unit, e.g. a rate in £ stored in pence */
+  units?: Readonly<Partial<Record<string, PrintedUnit>>>;
 }
 
 export interface ExtractionSettings {
@@ -55,14 +61,16 @@ export async function extractText(
   const started = performance.now();
   const response = await client.chat({
     model,
-    messages: buildTextPrompt(input.documentTypeName, input.pages),
-    format: input.jsonSchema,
+    messages: buildTextPrompt(input.documentTypeName, input.pages, input.hints),
+    format: toPrintedSchema(input.jsonSchema),
     stream: false,
     options: { temperature },
   });
   const durationMs = Math.round(performance.now() - started);
   const rawOutput = response.message.content;
-  const parsed = parseObject(rawOutput);
+  const object = parseObject(rawOutput);
+  // raw_output keeps the values as printed; parsed holds them in the schema's units
+  const parsed = object ? normalisePrinted(input.jsonSchema, object, input.units) : null;
 
   const rows = await db
     .insert(extractions)
