@@ -1,4 +1,5 @@
 import { IngestError, ingestDocument, type IngestErrorCode } from "@echdyn/core";
+import { getAuthConfig, requireApiAuth } from "@/lib/auth";
 import { getServices } from "@/lib/services";
 
 const errorStatus: Record<IngestErrorCode, number> = {
@@ -13,6 +14,11 @@ function problem(status: number, code: string, message: string): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  const denied = requireApiAuth(request, getAuthConfig());
+  if (denied) {
+    return denied;
+  }
+
   let form: FormData;
   try {
     form = await request.formData();

@@ -1,14 +1,28 @@
 @baseUrl = http://localhost:8000
+# API_TOKEN from .env
+@apiToken = local-dev-api-token-change-me-0000
 
 ### Health
 
 # Liveness check used by the Docker healthcheck
 GET {{baseUrl}}/api/health
 
+### Auth
+
+# No token or session: returns 401 with error code "unauthenticated"
+POST {{baseUrl}}/api/documents
+
+###
+
+# The UI redirects to /login when there is no session (follow redirects off to see the 307)
+# @no-redirect
+GET {{baseUrl}}/
+
 ### Documents
 
 # Upload a PDF for extraction: returns 201 with the new document id and status "queued"
 POST {{baseUrl}}/api/documents
+Authorization: Bearer {{apiToken}}
 Content-Type: multipart/form-data; boundary=echdyn
 
 --echdyn
@@ -26,6 +40,7 @@ Content-Type: application/pdf
 
 # Upload the same file again: returns 200 with the original document id and "duplicate": true
 POST {{baseUrl}}/api/documents
+Authorization: Bearer {{apiToken}}
 Content-Type: multipart/form-data; boundary=echdyn
 
 --echdyn
@@ -43,6 +58,7 @@ Content-Type: application/pdf
 
 # Unknown document type: returns 422 with error code "unknown_document_type"
 POST {{baseUrl}}/api/documents
+Authorization: Bearer {{apiToken}}
 Content-Type: multipart/form-data; boundary=echdyn
 
 --echdyn
@@ -60,6 +76,7 @@ Content-Type: application/pdf
 
 # Non-PDF content: returns 415 with error code "not_pdf"
 POST {{baseUrl}}/api/documents
+Authorization: Bearer {{apiToken}}
 Content-Type: multipart/form-data; boundary=echdyn
 
 --echdyn

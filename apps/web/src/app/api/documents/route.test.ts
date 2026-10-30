@@ -9,14 +9,29 @@ vi.mock("@echdyn/core", async (importOriginal) => ({
 }));
 vi.mock("@/lib/services", () => ({ getServices: () => ({}) }));
 
+const apiToken = "t".repeat(32);
+vi.mock("@/lib/auth/config", () => ({
+  getAuthConfig: () => ({
+    ADMIN_USERNAME: "admin",
+    ADMIN_PASSWORD: "correct horse battery",
+    API_TOKEN: apiToken,
+    SESSION_SECRET: "s".repeat(32),
+  }),
+}));
+
 const { POST } = await import("./route");
 
-function upload(fields: Record<string, string | File>): Request {
+const authorised = { authorization: `Bearer ${apiToken}` };
+
+function upload(
+  fields: Record<string, string | File>,
+  headers: Record<string, string> = authorised,
+): Request {
   const form = new FormData();
   for (const [key, value] of Object.entries(fields)) {
     form.append(key, value);
   }
-  return new Request("http://localhost/api/documents", { method: "POST", body: form });
+  return new Request("http://localhost/api/documents", { method: "POST", body: form, headers });
 }
 
 const pdfFile = new File(["%PDF-1.7 test"], "bill.pdf", { type: "application/pdf" });
@@ -24,6 +39,13 @@ const pdfFile = new File(["%PDF-1.7 test"], "bill.pdf", { type: "application/pdf
 describe("POST /api/documents", () => {
   beforeEach(() => {
     ingestDocument.mockReset();
+  });
+
+  it("rejects a request without credentials before reading the body", async () => {
+    const res = await POST(upload({ file: pdfFile, document_type: "uk-energy-bill" }, {}));
+
+    expect(res.status).toBe(401);
+    expect(ingestDocument).not.toHaveBeenCalled();
   });
 
   it("creates a document and returns 201", async () => {
@@ -50,7 +72,11 @@ describe("POST /api/documents", () => {
 
   it("rejects a body that is not multipart", async () => {
     const res = await POST(
-      new Request("http://localhost/api/documents", { method: "POST", body: "{}" }),
+      new Request("http://localhost/api/documents", {
+        method: "POST",
+        body: "{}",
+        headers: authorised,
+      }),
     );
 
     expect(res.status).toBe(400);
