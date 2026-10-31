@@ -1,8 +1,7 @@
-import { getRecord } from "@echdyn/core";
+import { getRecord, recordJson } from "@echdyn/core";
 import { problem } from "@/lib/api/upload";
 import { getAuthConfig, requireApiAuth } from "@/lib/auth";
 import { getServices } from "@/lib/services";
-import { recordJson } from "@/lib/api/records";
 
 /** One approved record with the run it came from and the reviewer's corrections */
 export async function GET(

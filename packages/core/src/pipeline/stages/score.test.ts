@@ -1,16 +1,18 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { eq, sql } from "drizzle-orm";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../../config";
 import { createDatabase } from "../../db/client";
-import { documents, records } from "../../db/schema";
+import { documents, records, webhookDeliveries } from "../../db/schema";
 import { seedDocumentTypes } from "../../document-types/seed";
 import type { Extraction } from "../../extraction/extract";
 import { ingestDocument } from "../../ingest/ingest";
 import type { DocumentQueue } from "../../queue/queue";
 import { createStorage } from "../../storage/storage";
 import { fakeChatClient } from "../../testing/fake-chat-client";
+import { createWebhookEndpoint } from "../../webhooks/endpoints";
+import type { WebhookQueue } from "../../webhooks/queue";
 import {
   PermanentPipelineError,
   processDocument,
@@ -168,6 +170,33 @@ describe.skipIf(!testUrl || !testBucket)("score stage", () => {
     expect(await documentRow(id)).toMatchObject({ status: "approved", flags: [] });
     const [record] = await db.select().from(records).where(eq(records.documentId, id));
     expect(record).toMatchObject({ data: bill, approvedBy: "auto" });
+  });
+
+  it("queues approval webhooks for an auto-approved record, written with it", async () => {
+    await db.execute(sql`truncate webhook_deliveries, webhook_endpoints cascade`);
+    await createWebhookEndpoint(db, { url: "https://example.com/hook" });
+    const webhooks = { addBulk: vi.fn() };
+    const id = await upload();
+
+    await processDocument(
+      { db, storage, webhooks: webhooks as unknown as WebhookQueue },
+      id,
+      pipeline([bill, bill]),
+    );
+
+    const deliveries = await db.select().from(webhookDeliveries);
+    expect(deliveries).toEqual([
+      expect.objectContaining({ event: "record.approved", status: "pending" }),
+    ]);
+    expect(webhooks.addBulk).toHaveBeenCalledWith([
+      expect.objectContaining({ data: { deliveryId: deliveries[0]?.id } }),
+    ]);
+
+    // A retried job finds the record already there and writes no second event
+    await db.update(documents).set({ status: "extracting" }).where(eq(documents.id, id));
+    await processDocument({ db, storage }, id, pipeline([bill, bill]));
+    expect(await db.select().from(webhookDeliveries)).toHaveLength(1);
+    await db.execute(sql`truncate webhook_deliveries, webhook_endpoints cascade`);
   });
 
   it("sends inconsistent runs to review with the disputed field flagged", async () => {

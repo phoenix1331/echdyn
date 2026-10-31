@@ -161,3 +161,40 @@ Authorization: Bearer {{apiToken}}
 # Replace the id with one from the list above
 GET {{baseUrl}}/api/records/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{apiToken}}
+
+### Webhooks
+
+# Add an endpoint: approvals are POSTed to it as "record.approved" events. The response carries
+# the signing secret, the only time it is shown
+POST {{baseUrl}}/api/webhooks
+Authorization: Bearer {{apiToken}}
+Content-Type: application/json
+
+{
+  "url": "https://example.com/echdyn-hook",
+  "description": "Accounts system"
+}
+
+###
+
+# Every endpoint with its delivery counts (pending, delivered, failed); secrets are never listed
+GET {{baseUrl}}/api/webhooks
+Authorization: Bearer {{apiToken}}
+
+###
+
+# Send a signed "ping" event to check a receiver and its secret. Replace the id with one from above
+POST {{baseUrl}}/api/webhooks/00000000-0000-0000-0000-000000000000/ping
+Authorization: Bearer {{apiToken}}
+
+###
+
+# The latest 50 deliveries to an endpoint: status, attempts, last HTTP status and error
+GET {{baseUrl}}/api/webhooks/00000000-0000-0000-0000-000000000000/deliveries
+Authorization: Bearer {{apiToken}}
+
+###
+
+# Stop deliveries to an endpoint (204); its delivery log is kept
+DELETE {{baseUrl}}/api/webhooks/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{apiToken}}

@@ -6,6 +6,8 @@ import { corrections, documents, documentTypes, extractions, records } from "../
 import type { FieldError } from "../db/schema";
 import { getDocumentType, toJsonSchema } from "../document-types/registry";
 import { validateExtraction } from "../validation/validate";
+import { dispatchDeliveries, recordApprovedDeliveries } from "../webhooks/events";
+import type { WebhookQueue } from "../webhooks/queue";
 
 export type ReviewErrorCode = "not_found" | "not_reviewable" | "nothing_extracted" | "unknown_type";
 
@@ -75,6 +77,8 @@ export async function approveDocument(
   db: Database,
   documentId: string,
   input: ApproveInput,
+  /** Approval webhooks are queued here after commit; without it they wait for the worker */
+  webhooks?: WebhookQueue,
 ): Promise<ApprovedDocument | RejectedApproval> {
   const [document] = await db
     .select({
@@ -143,7 +147,7 @@ export async function approveDocument(
     return { approved: false, errors, fields: Object.keys(properties) };
   }
 
-  const recordId = await db.transaction(async (tx) => {
+  const { recordId, deliveryIds } = await db.transaction(async (tx) => {
     const moved = await tx
       .update(documents)
       .set({ status: "approved", error: null, stage: null })
@@ -178,8 +182,13 @@ export async function approveDocument(
       })
       .returning({ id: records.id });
 
-    return firstRow(inserted, "record").id;
+    const id = firstRow(inserted, "record").id;
+    return { recordId: id, deliveryIds: await recordApprovedDeliveries(tx, id) };
   });
+
+  // The approval stands even if Redis is down: the deliveries stay pending and the worker
+  // queues them again when it starts
+  await dispatchDeliveries(webhooks, deliveryIds).catch(() => undefined);
 
   return {
     approved: true,

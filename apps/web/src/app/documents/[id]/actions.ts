@@ -22,15 +22,20 @@ export async function approveReview(
   }
 
   const request = parseApprovalForm(form);
-  const { db, storage, config } = getServices();
+  const { db, storage, config, webhooks } = getServices();
 
   let result;
   try {
-    result = await approveDocument(db, documentId, {
-      reviewer,
-      corrections: request.corrections,
-      overrideChecks: request.overrideChecks,
-    });
+    result = await approveDocument(
+      db,
+      documentId,
+      {
+        reviewer,
+        corrections: request.corrections,
+        overrideChecks: request.overrideChecks,
+      },
+      webhooks,
+    );
   } catch (error) {
     if (error instanceof ReviewError) {
       return { general: [error.message] };

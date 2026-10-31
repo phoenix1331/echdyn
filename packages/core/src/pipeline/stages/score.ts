@@ -4,6 +4,7 @@ import { documents, records, type FieldError } from "../../db/schema";
 import { getDocumentType } from "../../document-types/registry";
 import type { Extraction } from "../../extraction/extract";
 import { validateExtraction } from "../../validation/validate";
+import { dispatchDeliveries, recordApprovedDeliveries } from "../../webhooks/events";
 import { PermanentPipelineError, type PipelineStage } from "../pipeline";
 
 export const RUN_MISMATCH_RULE = "run-mismatch";
@@ -78,17 +79,23 @@ export function createScoreStage(settings: ScoreSettings): PipelineStage {
         throw new PermanentPipelineError(`Cannot approve ${ctx.document.id}: data is not valid`);
       }
 
-      // A retry after a crash may find the record already written
-      await ctx.deps.db
-        .insert(records)
-        .values({
-          documentId: ctx.document.id,
-          extractionId: primary.id,
-          documentTypeId: ctx.document.documentTypeId,
-          data,
-          approvedBy: "auto",
-        })
-        .onConflictDoNothing({ target: records.documentId });
+      // A retry after a crash may find the record already written: then its webhooks were
+      // written with it, so only a new record creates deliveries
+      const deliveryIds = await ctx.deps.db.transaction(async (tx) => {
+        const [record] = await tx
+          .insert(records)
+          .values({
+            documentId: ctx.document.id,
+            extractionId: primary.id,
+            documentTypeId: ctx.document.documentTypeId,
+            data,
+            approvedBy: "auto",
+          })
+          .onConflictDoNothing({ target: records.documentId })
+          .returning({ id: records.id });
+        return record ? recordApprovedDeliveries(tx, record.id) : [];
+      });
+      await dispatchDeliveries(ctx.deps.webhooks, deliveryIds).catch(() => undefined);
 
       ctx.outcome = "approved";
     },

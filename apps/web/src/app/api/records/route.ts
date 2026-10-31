@@ -1,5 +1,4 @@
-import { listRecords, parseRecordQuery, RecordQueryError } from "@echdyn/core";
-import { recordJson } from "@/lib/api/records";
+import { listRecords, parseRecordQuery, RecordQueryError, recordJson } from "@echdyn/core";
 import { problem } from "@/lib/api/upload";
 import { getAuthConfig, requireApiAuth } from "@/lib/auth";
 import { getServices } from "@/lib/services";

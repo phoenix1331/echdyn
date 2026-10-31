@@ -6,6 +6,7 @@ import type { Storage } from "../storage/storage";
 import type { PdfText } from "./stages/pre-process";
 import type { RenderedPage } from "./stages/render";
 import { transitionStatus } from "./status";
+import type { WebhookQueue } from "../webhooks/queue";
 
 export type Document = typeof documents.$inferSelect;
 export type DocumentTypeRow = typeof documentTypes.$inferSelect;
@@ -13,6 +14,8 @@ export type DocumentTypeRow = typeof documentTypes.$inferSelect;
 export interface PipelineDependencies {
   db: Database;
   storage: Storage;
+  /** Approval webhooks are queued here; the eval runs without one */
+  webhooks?: WebhookQueue;
 }
 
 export interface PipelineContext {

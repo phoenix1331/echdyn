@@ -1,5 +1,7 @@
+export { recordJson } from "./json";
 export {
   getRecord,
+  getRecordSummary,
   listRecords,
   type RecordDetail,
   type RecordPage,

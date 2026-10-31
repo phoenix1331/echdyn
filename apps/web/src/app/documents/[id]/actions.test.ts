@@ -24,6 +24,7 @@ const core = {
 const services = {
   db: {},
   storage: { get: vi.fn() },
+  webhooks: { name: "webhooks" },
   config: { LABELLED_SET_DIR: "/app/eval/sets/private" as string | undefined },
 };
 const reviewer = vi.fn<() => Promise<string | null>>();
@@ -90,11 +91,12 @@ describe("approveReview", () => {
     );
 
     expect(path).toBe("/documents/doc-1");
-    expect(core.approveDocument).toHaveBeenCalledWith(services.db, "doc-1", {
-      reviewer: "admin",
-      corrections: { total_gbp: "12" },
-      overrideChecks: true,
-    });
+    expect(core.approveDocument).toHaveBeenCalledWith(
+      services.db,
+      "doc-1",
+      { reviewer: "admin", corrections: { total_gbp: "12" }, overrideChecks: true },
+      services.webhooks,
+    );
     expect(core.appendToLabelledSet).not.toHaveBeenCalled();
   });
 

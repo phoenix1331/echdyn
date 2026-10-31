@@ -1,5 +1,5 @@
 import { and, asc, count, desc, eq, gte, lt, sql, type SQL } from "drizzle-orm";
-import type { Database } from "../db/client";
+import type { Database, Executor } from "../db/client";
 import { corrections, documents, documentTypes, records } from "../db/schema";
 import type { FieldFilter, FieldOperator, RecordQuery } from "./query";
 
@@ -117,7 +117,7 @@ function toSummary(row: SummaryRow): RecordSummary {
   };
 }
 
-function joined(db: Database) {
+function joined(db: Executor) {
   return db
     .select(summary)
     .from(records)
@@ -149,6 +149,12 @@ export async function listRecords(db: Database, query: RecordQuery): Promise<Rec
     pageSize: query.pageSize,
     pageCount: Math.max(1, Math.ceil(total / query.pageSize)),
   };
+}
+
+/** One record as summarised in lists and events; works inside a transaction */
+export async function getRecordSummary(db: Executor, id: string): Promise<RecordSummary | null> {
+  const [row] = await joined(db).where(eq(records.id, id));
+  return row ? toSummary(row) : null;
 }
 
 /** One record with the run it came from and every correction made on the way */

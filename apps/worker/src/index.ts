@@ -4,9 +4,12 @@ import {
   createPipelineStages,
   createRedisConnection,
   createStorage,
+  createWebhookQueue,
   loadConfig,
+  requeuePendingDeliveries,
 } from "@echdyn/core";
 import { createHealthServer } from "./health";
+import { createWebhookWorker } from "./webhooks";
 import { createDocumentWorker } from "./worker";
 
 const config = loadConfig();
@@ -21,8 +24,10 @@ if (await storage.ensureBucket()) {
   console.log(`created storage bucket ${storage.bucket}`);
 }
 
+const webhookQueue = createWebhookQueue(connection);
+
 const worker = createDocumentWorker({
-  deps: { db: database.db, storage },
+  deps: { db: database.db, storage, webhooks: webhookQueue },
   stages: createPipelineStages({
     client: createOllamaClient(config.OLLAMA_HOST, config.OLLAMA_TIMEOUT_MS),
     textModel: config.OLLAMA_TEXT_MODEL,
@@ -43,7 +48,32 @@ worker.on("error", (error) => {
   console.error("worker error", error);
 });
 
-const server = createHealthServer(() => worker.isRunning());
+const webhookWorker = createWebhookWorker({
+  db: database.db,
+  connection,
+  log: (message) => {
+    console.log(message);
+  },
+});
+webhookWorker.on("error", (error) => {
+  console.error("webhook worker error", error);
+});
+
+// Deliveries written by an approval whose process died before it could queue them. Never
+// fatal: on a fresh database the worker can start before migrations have run
+try {
+  const requeued = await requeuePendingDeliveries(database.db, webhookQueue);
+  if (requeued > 0) {
+    console.log(`requeued ${String(requeued)} pending webhook deliveries`);
+  }
+} catch (error) {
+  console.warn(
+    "could not requeue pending webhook deliveries; they will be on the next start",
+    error,
+  );
+}
+
+const server = createHealthServer(() => worker.isRunning() && webhookWorker.isRunning());
 
 server.listen(healthPort, () => {
   console.log(
@@ -61,7 +91,8 @@ async function shutdown(signal: NodeJS.Signals): Promise<void> {
   console.log(`worker received ${signal}, finishing active jobs`);
 
   // close() waits for in-flight jobs, so a deploy never abandons a document mid-extraction
-  await worker.close();
+  await Promise.all([worker.close(), webhookWorker.close()]);
+  await webhookQueue.close();
   server.close();
   await connection.quit();
   await database.close();

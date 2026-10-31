@@ -33,6 +33,6 @@ describe.skipIf(!testUrl)("resetDatabase", () => {
     const rebuilt = await db.execute(
       sql`select tablename from pg_tables where schemaname = 'public'`,
     );
-    expect(rebuilt).toHaveLength(6);
+    expect(rebuilt).toHaveLength(8);
   });
 });

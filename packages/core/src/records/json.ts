@@ -1,6 +1,6 @@
-import type { RecordSummary } from "@echdyn/core";
+import type { RecordSummary } from "./queries";
 
-/** A record as the API returns it: snake_case, like every other endpoint */
+/** A record as the API and webhooks send it: snake_case, the same shape everywhere */
 export function recordJson(record: RecordSummary) {
   return {
     id: record.id,

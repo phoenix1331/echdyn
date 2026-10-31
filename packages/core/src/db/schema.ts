@@ -166,3 +166,41 @@ export const corrections = pgTable(
   },
   (t) => [index("corrections_document_id_idx").on(t.documentId)],
 );
+
+/** Where approval events are POSTed; deactivated rather than deleted, so the log survives */
+export const webhookEndpoints = pgTable("webhook_endpoints", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  url: text("url").notNull(),
+  description: text("description"),
+  /** Signs every request (HMAC-SHA256); shown to the admin once, when created */
+  secret: text("secret").notNull(),
+  active: boolean("active").notNull().default(true),
+  ...timestamps,
+});
+
+export type WebhookDeliveryStatus = "pending" | "delivered" | "failed";
+
+/** One event for one endpoint: written with the approval (outbox), updated on each attempt */
+export const webhookDeliveries = pgTable(
+  "webhook_deliveries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    endpointId: uuid("endpoint_id")
+      .notNull()
+      .references(() => webhookEndpoints.id, { onDelete: "cascade" }),
+    event: text("event").notNull(),
+    /** The exact JSON body sent, so a receiver's complaint can be checked against it */
+    payload: jsonb("payload").$type<Record<string, unknown>>().notNull(),
+    status: text("status").$type<WebhookDeliveryStatus>().notNull().default("pending"),
+    attempts: integer("attempts").notNull().default(0),
+    lastStatusCode: integer("last_status_code"),
+    lastError: text("last_error"),
+    lastAttemptAt: timestamp("last_attempt_at", { withTimezone: true }),
+    deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    index("webhook_deliveries_endpoint_idx").on(t.endpointId, t.createdAt),
+    index("webhook_deliveries_status_idx").on(t.status),
+  ],
+);

@@ -1,9 +1,18 @@
 import { eq, sql } from "drizzle-orm";
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createDatabase } from "../db/client";
-import { corrections, documents, documentTypes, extractions, records } from "../db/schema";
+import {
+  corrections,
+  documents,
+  documentTypes,
+  extractions,
+  records,
+  webhookDeliveries,
+} from "../db/schema";
 import { energyBill } from "../document-types/energy-bill";
 import { toJsonSchema } from "../document-types/registry";
+import { createWebhookEndpoint } from "../webhooks/endpoints";
+import type { WebhookQueue } from "../webhooks/queue";
 import { approveDocument, coerceInput, ReviewError } from "./approve";
 
 const testUrl = process.env.TEST_DATABASE_URL;
@@ -136,6 +145,44 @@ describe.skipIf(!testUrl)("approveDocument", () => {
         reviewer: "admin",
       }),
     ]);
+  });
+
+  it("writes approval webhooks in the same transaction and queues them after", async () => {
+    await db.execute(sql`truncate webhook_deliveries, webhook_endpoints cascade`);
+    await createWebhookEndpoint(db, { url: "https://example.com/hook" });
+    const webhooks = { addBulk: vi.fn() };
+
+    const result = await approveDocument(
+      db,
+      documentId,
+      { reviewer: "admin", corrections: { vat_gbp: "82.48" } },
+      webhooks as unknown as WebhookQueue,
+    );
+
+    const [delivery] = await db.select().from(webhookDeliveries);
+    expect(delivery?.payload).toMatchObject({
+      type: "record.approved",
+      data: { record: { id: result.approved ? result.recordId : "", data: { vat_gbp: 82.48 } } },
+    });
+    expect(webhooks.addBulk).toHaveBeenCalledOnce();
+    await db.execute(sql`truncate webhook_deliveries, webhook_endpoints cascade`);
+  });
+
+  it("still approves when the queue is down, leaving the delivery pending for the worker", async () => {
+    await db.execute(sql`truncate webhook_deliveries, webhook_endpoints cascade`);
+    await createWebhookEndpoint(db, { url: "https://example.com/hook" });
+    const webhooks = { addBulk: vi.fn().mockRejectedValue(new Error("Redis down")) };
+
+    const result = await approveDocument(
+      db,
+      documentId,
+      { reviewer: "admin", corrections: { vat_gbp: "82.48" } },
+      webhooks as unknown as WebhookQueue,
+    );
+
+    expect(result.approved).toBe(true);
+    expect((await db.select().from(webhookDeliveries))[0]?.status).toBe("pending");
+    await db.execute(sql`truncate webhook_deliveries, webhook_endpoints cascade`);
   });
 
   it("uses the latest attempt at run 1 when a retried job stored it twice", async () => {

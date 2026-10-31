@@ -4,6 +4,7 @@ const createDatabase = vi.fn(() => ({ db: { name: "db" }, close: vi.fn() }));
 const createStorage = vi.fn(() => ({ name: "storage" }));
 const createRedisConnection = vi.fn(() => ({ name: "redis" }));
 const createDocumentQueue = vi.fn(() => ({ name: "queue" }));
+const createWebhookQueue = vi.fn(() => ({ name: "webhooks" }));
 
 vi.mock("@echdyn/core", () => ({
   loadConfig: () => ({ DATABASE_URL: "postgres://db", REDIS_URL: "redis://redis" }),
@@ -11,6 +12,7 @@ vi.mock("@echdyn/core", () => ({
   createStorage,
   createDocumentQueue,
   createRedisConnection,
+  createWebhookQueue,
 }));
 
 const { getServices } = await import("./services");
@@ -26,9 +28,13 @@ describe("getServices", () => {
       db: { name: "db" },
       storage: { name: "storage" },
       queue: { name: "queue" },
+      webhooks: { name: "webhooks" },
     });
     expect(createDatabase).toHaveBeenCalledOnce();
     expect(createRedisConnection).toHaveBeenCalledWith("redis://redis");
     expect(createDocumentQueue).toHaveBeenCalledWith({ name: "redis" });
+    // One Redis connection shared by both queues
+    expect(createRedisConnection).toHaveBeenCalledOnce();
+    expect(createWebhookQueue).toHaveBeenCalledWith({ name: "redis" });
   });
 });
