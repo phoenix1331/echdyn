@@ -117,3 +117,47 @@ these are not the bills you are looking for
 GET {{baseUrl}}/api/documents/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{apiToken}}
 
+
+###
+
+# Documents, newest first, with the list page's filters: status, type, q (file name), page, page_size
+GET {{baseUrl}}/api/documents?status=needs_review&page_size=10
+Authorization: Bearer {{apiToken}}
+
+###
+
+# A filter the API does not know: returns 422 with error code "invalid_query" saying what is allowed
+GET {{baseUrl}}/api/documents?status=done
+Authorization: Bearer {{apiToken}}
+
+### Records
+
+# Approved records, newest first, with paging (page, page_size up to 100)
+GET {{baseUrl}}/api/records
+Authorization: Bearer {{apiToken}}
+
+###
+
+# Unit rate above 30p: field filters are field:operator:value, checked against the type's schema,
+# so they need a type. Numbers and dates take eq, ne, gt, gte, lt, lte; text takes eq, ne, contains
+GET {{baseUrl}}/api/records?type=uk-energy-bill&filter=unit_rate_pence:gt:30
+Authorization: Bearer {{apiToken}}
+
+###
+
+# Several filters combine: a supplier, billing periods from 2026, approved in October (inclusive)
+GET {{baseUrl}}/api/records?type=uk-energy-bill&filter=supplier:contains:severn&filter=billing_period_start:gte:2026-01-01&approved_from=2026-10-01&approved_to=2026-10-31
+Authorization: Bearer {{apiToken}}
+
+###
+
+# A filter that does not fit the field: returns 422 explaining why (text cannot be compared with gt)
+GET {{baseUrl}}/api/records?type=uk-energy-bill&filter=supplier:gt:a
+Authorization: Bearer {{apiToken}}
+
+###
+
+# One record with the extraction it came from and every correction a reviewer made: the audit trail.
+# Replace the id with one from the list above
+GET {{baseUrl}}/api/records/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{apiToken}}

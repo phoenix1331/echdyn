@@ -2,10 +2,12 @@ import { IngestError } from "@echdyn/core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const ingestDocument = vi.fn();
+const listDocuments = vi.fn();
 
 vi.mock("@echdyn/core", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@echdyn/core")>()),
   ingestDocument: (...args: unknown[]) => ingestDocument(...args) as unknown,
+  listDocuments: (...args: unknown[]) => listDocuments(...args) as unknown,
 }));
 vi.mock("@/lib/services", () => ({ getServices: () => ({}) }));
 
@@ -19,7 +21,7 @@ vi.mock("@/lib/auth/config", () => ({
   }),
 }));
 
-const { POST } = await import("./route");
+const { GET, POST } = await import("./route");
 
 const authorised = { authorization: `Bearer ${apiToken}` };
 
@@ -116,5 +118,75 @@ describe("POST /api/documents", () => {
     await expect(POST(upload({ file: pdfFile, document_type: "uk-energy-bill" }))).rejects.toThrow(
       "boom",
     );
+  });
+});
+
+describe("GET /api/documents", () => {
+  const list = (query: string, headers: Record<string, string> = authorised) =>
+    GET(new Request(`http://localhost/api/documents${query}`, { headers }));
+
+  beforeEach(() => {
+    listDocuments.mockReset().mockResolvedValue({
+      items: [
+        {
+          id: "d1",
+          filename: "march.pdf",
+          documentType: { slug: "uk-energy-bill", name: "UK business energy bill", version: 1 },
+          status: "needs_review",
+          stage: null,
+          error: null,
+          flagCount: 3,
+          pageCount: 2,
+          queueAhead: null,
+          createdAt: new Date(Date.UTC(2026, 9, 31, 9)),
+          updatedAt: new Date(Date.UTC(2026, 9, 31, 9, 1)),
+        },
+      ],
+      total: 1,
+      page: 1,
+      pageSize: 25,
+      pageCount: 1,
+    });
+  });
+
+  it("needs credentials", async () => {
+    expect((await list("", {})).status).toBe(401);
+  });
+
+  it("lists documents in snake_case with the list page's filters", async () => {
+    const res = await list("?status=needs_review&q=march");
+
+    expect(await res.json()).toEqual({
+      documents: [
+        {
+          id: "d1",
+          filename: "march.pdf",
+          document_type: { slug: "uk-energy-bill", name: "UK business energy bill", version: 1 },
+          status: "needs_review",
+          stage: null,
+          error: null,
+          flag_count: 3,
+          page_count: 2,
+          queue_ahead: null,
+          created_at: "2026-10-31T09:00:00.000Z",
+          updated_at: "2026-10-31T09:01:00.000Z",
+        },
+      ],
+      page: 1,
+      page_size: 25,
+      total: 1,
+    });
+    // This file mocks services without a db
+    expect(listDocuments).toHaveBeenCalledWith(undefined, {
+      status: "needs_review",
+      search: "march",
+    });
+  });
+
+  it("explains a bad filter with 422 instead of ignoring it", async () => {
+    const res = await list("?status=done");
+
+    expect(res.status).toBe(422);
+    expect(listDocuments).not.toHaveBeenCalled();
   });
 });

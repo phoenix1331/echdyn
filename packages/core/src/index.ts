@@ -7,5 +7,6 @@ export * from "./extraction";
 export * from "./ingest";
 export * from "./pipeline";
 export * from "./queue";
+export * from "./records";
 export * from "./storage";
 export * from "./validation";
