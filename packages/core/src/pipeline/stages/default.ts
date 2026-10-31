@@ -2,6 +2,7 @@ import type { ChatClient } from "../../extraction/extract";
 import type { PipelineStage } from "../pipeline";
 import { createExtractStage } from "./extract";
 import { preProcessStage } from "./pre-process";
+import { renderPagesStage } from "./render";
 import { createScoreStage } from "./score";
 import { validateStage } from "./validate";
 
@@ -24,6 +25,8 @@ export function createPipelineStages({
 }: PipelineSettings): PipelineStage[] {
   return [
     preProcessStage,
+    // Scans only: page images for the vision model
+    renderPagesStage,
     // Primary run at temperature 0, then a consistency run with a little randomness:
     // fields the model is unsure about tend to change between the two
     createExtractStage({ client, model: textModel }),

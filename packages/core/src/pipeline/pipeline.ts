@@ -4,6 +4,7 @@ import { documents, documentTypes } from "../db/schema";
 import type { Extraction } from "../extraction/extract";
 import type { Storage } from "../storage/storage";
 import type { PdfText } from "./stages/pre-process";
+import type { RenderedPage } from "./stages/render";
 import { transitionStatus } from "./status";
 
 export type Document = typeof documents.$inferSelect;
@@ -21,6 +22,8 @@ export interface PipelineContext {
   file: Uint8Array;
   /** Set by the pre-process stage */
   text?: PdfText;
+  /** Page images, set by the render stage for scans only */
+  pages?: RenderedPage[];
   /** Model runs so far, in order */
   extractions: Extraction[];
   /** Final status when every stage succeeds; stages may promote it to "approved" */

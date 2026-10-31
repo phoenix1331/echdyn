@@ -3,7 +3,7 @@ import { fakeChatClient } from "../../testing/fake-chat-client";
 import { createPipelineStages } from "./default";
 
 describe("createPipelineStages", () => {
-  it("uses the production order: two extraction runs between pre-process and validation", () => {
+  it("uses the production order: render for scans, then two extraction runs before validation", () => {
     const stages = createPipelineStages({
       client: fakeChatClient([]),
       textModel: "m",
@@ -12,6 +12,7 @@ describe("createPipelineStages", () => {
 
     expect(stages.map((s) => s.name)).toEqual([
       "pre-process",
+      "render",
       "extract",
       "extract",
       "validate",

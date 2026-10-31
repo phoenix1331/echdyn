@@ -4,6 +4,16 @@ export {
   preProcessStage,
   type PdfText,
 } from "./pre-process";
+export {
+  MAX_PAGE_EDGE_PX,
+  MAX_RENDERED_PAGES,
+  RENDER_DPI,
+  renderPagesStage,
+  renderPdfPages,
+  type PageImage,
+  type RenderedPage,
+  type RenderOptions,
+} from "./render";
 export { createExtractStage } from "./extract";
 export { validateStage } from "./validate";
 export {

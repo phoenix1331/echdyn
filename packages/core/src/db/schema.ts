@@ -102,6 +102,23 @@ export const extractions = pgTable(
   ],
 );
 
+/** Page images rendered from scans, for the vision model; one row per page */
+export const documentPages = pgTable(
+  "document_pages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    documentId: uuid("document_id")
+      .notNull()
+      .references(() => documents.id, { onDelete: "cascade" }),
+    pageNumber: integer("page_number").notNull(),
+    storageKey: text("storage_key").notNull(),
+    width: integer("width").notNull(),
+    height: integer("height").notNull(),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex("document_pages_document_page_idx").on(t.documentId, t.pageNumber)],
+);
+
 export const records = pgTable(
   "records",
   {

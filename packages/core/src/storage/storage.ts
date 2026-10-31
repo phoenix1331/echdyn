@@ -36,6 +36,11 @@ export function documentStorageKey(documentTypeSlug: string, sha256: string): st
   return `${documentTypeSlug}/${sha256.slice(0, 2)}/${sha256}.pdf`;
 }
 
+/** Rendered page images sit in a folder named after the PDF they came from */
+export function pageImageKey(documentTypeSlug: string, sha256: string, pageNumber: number): string {
+  return `${documentTypeSlug}/${sha256.slice(0, 2)}/${sha256}/page-${String(pageNumber)}.png`;
+}
+
 function clientConfig(config: StorageConfig, endpoint: string): S3ClientConfig {
   return {
     endpoint,
