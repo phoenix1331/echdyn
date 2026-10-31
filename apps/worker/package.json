@@ -11,8 +11,7 @@
   "dependencies": {
     "@echdyn/core": "workspace:*",
     "bullmq": "^6.5.1",
-    "ioredis": "^6.0.0",
-    "ollama": "0.6.4"
+    "ioredis": "^6.0.0"
   },
   "devDependencies": {
     "drizzle-orm": "0.45.4",

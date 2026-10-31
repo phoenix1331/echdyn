@@ -13,6 +13,10 @@ export interface DocumentResult {
   model: string;
   /** The label's layout, or its source when it has none */
   layout: string;
+  /** The labelled set it came from, e.g. synthetic or scanned */
+  set: string;
+  /** The model that wrote the primary run: the text or the vision model; null when none ran */
+  readBy: string | null;
   outcome: EvalOutcome;
   durationMs: number;
   fields: Record<string, FieldResult>;
@@ -24,6 +28,12 @@ export interface LayoutSummary {
   fieldAccuracy: number;
   documentAccuracy: number;
   flaggedShare: number;
+}
+
+export interface SetSummary extends LayoutSummary {
+  /** Models that read the set's documents, usually one */
+  readBy: string[];
+  medianDurationMs: number;
 }
 
 export interface ModelSummary {
@@ -42,6 +52,8 @@ export interface ModelSummary {
   medianDurationMs: number;
   /** Shows which templates a model struggles with, which overall accuracy hides */
   byLayout: Record<string, LayoutSummary>;
+  /** Text and scans apart: blending them would hide how each path does */
+  bySet: Record<string, SetSummary>;
 }
 
 /** Exact match, except text ignores case and surrounding whitespace (logos are often in capitals) */
@@ -97,6 +109,7 @@ export function summarise(model: string, results: readonly DocumentResult[]): Mo
   const fieldNames = [...new Set(fieldResults.map(([field]) => field))];
   const approved = results.filter((r) => r.outcome === "approved");
   const layouts = [...new Set(results.map((r) => r.layout))].sort();
+  const sets = [...new Set(results.map((r) => r.set))];
 
   return {
     model,
@@ -116,6 +129,19 @@ export function summarise(model: string, results: readonly DocumentResult[]): Mo
         layout,
         summariseLayout(results.filter((r) => r.layout === layout)),
       ]),
+    ),
+    bySet: Object.fromEntries(
+      sets.map((set) => {
+        const inSet = results.filter((r) => r.set === set);
+        return [
+          set,
+          {
+            ...summariseLayout(inSet),
+            readBy: [...new Set(inSet.flatMap((r) => (r.readBy ? [r.readBy] : [])))],
+            medianDurationMs: median(inSet.map((r) => r.durationMs)),
+          },
+        ];
+      }),
     ),
   };
 }

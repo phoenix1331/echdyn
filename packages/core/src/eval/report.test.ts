@@ -22,6 +22,24 @@ const summary = (model: string, accuracy: number): ModelSummary => ({
       flaggedShare: 0.8,
     },
   },
+  bySet: {
+    synthetic: {
+      documents: 30,
+      fieldAccuracy: accuracy,
+      documentAccuracy: 0.5,
+      flaggedShare: 0.4,
+      readBy: [model],
+      medianDurationMs: 40_000,
+    },
+    scanned: {
+      documents: 5,
+      fieldAccuracy: 0.8,
+      documentAccuracy: 0.2,
+      flaggedShare: 1,
+      readBy: [],
+      medianDurationMs: 300_000,
+    },
+  },
 });
 
 describe("renderReport", () => {
@@ -56,6 +74,34 @@ describe("renderReport", () => {
     expect(compact).toContain("| Severn Valley Energy | llama3.2 | 10 | 81.7% | 20.0% | 80.0% |");
     expect(compact).toContain("| Severn Valley Energy | qwen3:8b | 10 | 88.0% |");
     expect(report.endsWith("\n")).toBe(true);
+  });
+
+  it("shows each set apart, with the model that actually read it", () => {
+    expect(compact).toContain(
+      "| Set | Model | Read by | Documents | Field accuracy | Documents fully correct | Flagged | Median latency |",
+    );
+    expect(compact).toContain(
+      "| synthetic | llama3.2 | llama3.2 | 30 | 91.7% | 50.0% | 40.0% | 40.0 s |",
+    );
+    expect(compact).toContain(
+      "| scanned | llama3.2 | none | 5 | 80.0% | 20.0% | 100.0% | 300.0 s |",
+    );
+  });
+
+  it("names the vision model and its prompt when scans were measured", () => {
+    const withScans = renderReport([summary("llama3.2", 0.9)], {
+      date: "2026-10-31",
+      promptVersion: "text-v2",
+      vision: { model: "qwen2.5vl:3b", promptVersion: "vision-v1" },
+      sets: [
+        { name: "synthetic", documents: 5 },
+        { name: "scanned", documents: 5 },
+      ],
+    });
+
+    expect(withScans).toContain(
+      "Prompt `text-v2`. Scans read by `qwen2.5vl:3b` with prompt `vision-v1`. Sets: synthetic (5 documents), scanned (5 documents).",
+    );
   });
 
   it("is already formatted the way Prettier would write it", async () => {

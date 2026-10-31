@@ -51,10 +51,13 @@ describe("summarise", () => {
     b: boolean,
     durationMs: number,
     layout = "x",
+    set = "synthetic",
   ): DocumentResult => ({
     id: "d",
     model: "m",
     layout,
+    set,
+    readBy: set === "scanned" ? "vision" : "m",
     outcome,
     durationMs,
     fields: { a: field(a), b: field(b) },
@@ -65,7 +68,7 @@ describe("summarise", () => {
       doc("approved", true, true, 1000),
       doc("approved", true, false, 3000),
       doc("needs_review", false, true, 2000, "y"),
-      doc("failed", false, false, 500, "y"),
+      doc("failed", false, false, 500, "y", "scanned"),
     ]);
 
     expect(summary).toEqual({
@@ -83,6 +86,24 @@ describe("summarise", () => {
         x: { documents: 2, fieldAccuracy: 3 / 4, documentAccuracy: 1 / 2, flaggedShare: 0 },
         y: { documents: 2, fieldAccuracy: 1 / 4, documentAccuracy: 0, flaggedShare: 1 / 2 },
       },
+      bySet: {
+        synthetic: {
+          documents: 3,
+          fieldAccuracy: 4 / 6,
+          documentAccuracy: 1 / 3,
+          flaggedShare: 1 / 3,
+          readBy: ["m"],
+          medianDurationMs: 2000,
+        },
+        scanned: {
+          documents: 1,
+          fieldAccuracy: 0,
+          documentAccuracy: 0,
+          flaggedShare: 0,
+          readBy: ["vision"],
+          medianDurationMs: 500,
+        },
+      },
     });
   });
 
@@ -92,6 +113,7 @@ describe("summarise", () => {
       fieldAccuracy: 0,
       flaggedShare: 0,
       byLayout: {},
+      bySet: {},
     });
   });
 });

@@ -13,6 +13,12 @@ const configSchema = z.object({
   OLLAMA_HOST: z.url(),
   OLLAMA_TEXT_MODEL: z.string().min(1),
   OLLAMA_VISION_MODEL: z.string().min(1),
+  /** How long one model call may take; vision on CPU is slow on its first call */
+  OLLAMA_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(30 * 60 * 1000),
   AUTO_APPROVE: z.stringbool().default(true),
   /** Where reviewed documents are added as labelled examples; unset hides the option */
   LABELLED_SET_DIR: z.string().min(1).optional(),

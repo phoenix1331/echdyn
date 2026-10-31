@@ -14,7 +14,10 @@ import { scoreFields, summarise, type DocumentResult, type ModelSummary } from "
 
 export interface EvalOptions {
   documents: readonly LabelledDocument[];
+  /** Each candidate reads every text document */
   models: readonly string[];
+  /** Reads every scan, whichever text model is being measured */
+  visionModel?: string;
   /** Must point at a dedicated eval database: it is reset before each model */
   deps: PipelineDependencies;
   client: ChatClient;
@@ -33,6 +36,7 @@ const noQueue = { add: () => Promise.resolve() } as unknown as DocumentQueue;
 export async function runEval({
   documents,
   models,
+  visionModel,
   deps,
   client,
   autoApprove = true,
@@ -47,7 +51,12 @@ export async function runEval({
     await migrateDatabase(deps.db);
     await seedDocumentTypes(deps.db);
 
-    const stages = createPipelineStages({ client, textModel: model, autoApprove });
+    const stages = createPipelineStages({
+      client,
+      textModel: model,
+      ...(visionModel ? { visionModel } : {}),
+      autoApprove,
+    });
     const modelResults: DocumentResult[] = [];
 
     for (const [index, labelled] of documents.entries()) {
@@ -70,7 +79,7 @@ export async function runEval({
 
       // Score the primary run: it is what gets approved, and what a reviewer starts from
       const [primary] = await deps.db
-        .select({ parsed: extractions.parsed })
+        .select({ parsed: extractions.parsed, model: extractions.model })
         .from(extractions)
         .where(and(eq(extractions.documentId, id), eq(extractions.runNumber, 1)));
 
@@ -78,6 +87,8 @@ export async function runEval({
         id: labelled.id,
         model,
         layout: labelled.layout ?? labelled.source,
+        set: labelled.set,
+        readBy: primary?.model ?? null,
         outcome,
         durationMs,
         fields: scoreFields(labelled.expected, primary?.parsed ?? null),

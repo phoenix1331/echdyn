@@ -2,10 +2,11 @@
 
 Ground truth for measuring extraction accuracy. Each set is a directory of PDFs, each with a JSON label beside it.
 
-| Directory         | Contents                                                       | In git          |
-| ----------------- | -------------------------------------------------------------- | --------------- |
-| `sets/synthetic/` | 30 generated UK energy bills (`make eval-generate`, seed 1331) | Yes             |
-| `sets/private/`   | Your own real documents and labels                             | No (gitignored) |
+| Directory         | Contents                                                                      | In git          |
+| ----------------- | ----------------------------------------------------------------------------- | --------------- |
+| `sets/synthetic/` | 30 generated UK energy bills (`make eval-generate`, seed 1331)                | Yes             |
+| `sets/scanned/`   | The same 30 bills as image-only scans, same labels, layout marked `(scanned)` | Yes             |
+| `sets/private/`   | Your own real documents and labels                                            | No (gitignored) |
 
 ## Label format
 
@@ -54,3 +55,20 @@ Labels are validated against the document type's schema when loaded, so a typo i
 ## Synthetic bills
 
 Three supplier layouts with different labels, date formats (`01/08/2026`, `1 August 2026`, `01-Aug-26`) and units (one quotes rates in £/kWh, which must end up in pence). Bills mix electricity (valid MPAN check digits) and gas (volume to kWh conversion lines), 5% and 20% VAT, and include distractor figures: previous balances, payments, meter readings and a 12-month usage page on some bills. Every label passes the document type's business rules.
+
+## Scanned bills
+
+`make eval-generate` also writes `sets/scanned/`: each synthetic bill rasterised at 150 DPI, tilted by up to a degree on off-white paper, speckled and saved as JPEG pages in an image-only PDF. With no text layer, the pipeline renders the pages and sends them to the vision model (`OLLAMA_VISION_MODEL`), so this set measures the vision path against exactly the ground truth the text set uses.
+
+## Running the eval
+
+`make eval` runs every set present. Text documents are read by each model in `MODELS`, scans by `VISION_MODEL` (default `OLLAMA_VISION_MODEL`). The report shows each set apart, with the model that actually read it.
+
+| Example                              | Runs                                   |
+| ------------------------------------ | -------------------------------------- |
+| `make eval`                          | Everything, with the models in `.env`  |
+| `make eval MODELS=llama3.2,qwen3:8b` | Two text models, same vision model     |
+| `make eval LIMIT=5`                  | The first 5 documents of every set     |
+| `make eval LIMIT=scanned=5`          | Every text document, the first 5 scans |
+
+Vision on CPU is slow (minutes per scan), so limit the scanned set on machines without a GPU.

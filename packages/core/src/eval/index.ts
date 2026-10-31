@@ -13,7 +13,9 @@ export {
   writeSyntheticSet,
   type GeneratedBill,
   type GenerateOptions,
+  scanBills,
 } from "./synthetic/generate";
+export { scanPdf } from "./synthetic/scan";
 export { renderReport, type ReportMeta } from "./report";
 export { runEval, type EvalOptions, type EvalRun } from "./run";
 export {

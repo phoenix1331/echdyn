@@ -1,0 +1,20 @@
+{
+  "document_type": "uk-energy-bill",
+  "source": "synthetic",
+  "layout": "Severn Valley Energy (scanned)",
+  "notes": "Severn Valley Energy, electricity, 2 pages, scanned",
+  "expected": {
+    "supplier": "Severn Valley Energy",
+    "account_number": "53/862-159",
+    "meter_point_number": "1128192879036",
+    "billing_period_start": "2025-09-28",
+    "billing_period_end": "2025-10-31",
+    "consumption_kwh": 3217.7,
+    "unit_rate_pence": 32.27,
+    "standing_charge_pence_per_day": 91.36,
+    "subtotal_gbp": 1069.41,
+    "vat_rate_percent": 20,
+    "vat_gbp": 213.88,
+    "total_gbp": 1283.29
+  }
+}

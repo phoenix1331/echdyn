@@ -1,11 +1,11 @@
 import {
   createDatabase,
+  createOllamaClient,
   createPipelineStages,
   createRedisConnection,
   createStorage,
   loadConfig,
 } from "@echdyn/core";
-import { Ollama } from "ollama";
 import { createHealthServer } from "./health";
 import { createDocumentWorker } from "./worker";
 
@@ -24,8 +24,9 @@ if (await storage.ensureBucket()) {
 const worker = createDocumentWorker({
   deps: { db: database.db, storage },
   stages: createPipelineStages({
-    client: new Ollama({ host: config.OLLAMA_HOST }),
+    client: createOllamaClient(config.OLLAMA_HOST, config.OLLAMA_TIMEOUT_MS),
     textModel: config.OLLAMA_TEXT_MODEL,
+    visionModel: config.OLLAMA_VISION_MODEL,
     autoApprove: config.AUTO_APPROVE,
   }),
   connection,
@@ -46,7 +47,7 @@ const server = createHealthServer(() => worker.isRunning());
 
 server.listen(healthPort, () => {
   console.log(
-    `worker ready (concurrency ${concurrency}, health on :${healthPort}, ollama ${config.OLLAMA_TEXT_MODEL} at ${config.OLLAMA_HOST})`,
+    `worker ready (concurrency ${concurrency}, health on :${healthPort}, ollama ${config.OLLAMA_TEXT_MODEL} (text) and ${config.OLLAMA_VISION_MODEL} (vision) at ${config.OLLAMA_HOST})`,
   );
 });
 

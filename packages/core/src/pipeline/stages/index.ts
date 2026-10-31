@@ -14,7 +14,7 @@ export {
   type RenderedPage,
   type RenderOptions,
 } from "./render";
-export { createExtractStage } from "./extract";
+export { createExtractStage, type ExtractStageSettings } from "./extract";
 export { validateStage } from "./validate";
 export {
   createScoreStage,

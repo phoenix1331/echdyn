@@ -1,6 +1,6 @@
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { energyBill } from "../document-types/energy-bill";
 import { validateExtraction } from "../validation/validate";
@@ -53,6 +53,7 @@ describe("loadLabelledSet", () => {
     expect(docs.map((d) => d.id)).toEqual(["a", "b"]);
     expect(docs[0]).toEqual({
       id: "a",
+      set: basename(dir),
       pdfPath: join(dir, "a.pdf"),
       documentType: "uk-energy-bill",
       source: "real",
@@ -137,6 +138,7 @@ describe("appendToLabelledSet", () => {
     expect(await loadLabelledSet(dir)).toEqual([
       {
         id,
+        set: "private",
         pdfPath: join(dir, `${id}.pdf`),
         documentType: "uk-energy-bill",
         source: "real",

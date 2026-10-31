@@ -22,6 +22,7 @@ x-node: &node
     OLLAMA_HOST: ${OLLAMA_HOST:-http://ollama:11434}
     OLLAMA_TEXT_MODEL: ${OLLAMA_TEXT_MODEL:-qwen3:8b}
     OLLAMA_VISION_MODEL: ${OLLAMA_VISION_MODEL:-qwen2.5vl:7b}
+    OLLAMA_TIMEOUT_MS: ${OLLAMA_TIMEOUT_MS:-1800000}
     AUTO_APPROVE: ${AUTO_APPROVE:-true}
 
 services:
@@ -142,6 +143,11 @@ services:
 
   ollama:
     image: ollama/ollama:0.40.13
+    environment:
+      # One model in memory at a time: on a CPU-only machine Ollama does not evict for RAM,
+      # and the text and vision models together got the vision runner OOM-killed on 7 GB.
+      # Raise it on a GPU box with room for both.
+      OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS:-1}
     ports:
       - "${OLLAMA_PORT:-11434}:11434"
     volumes:

@@ -1,10 +1,17 @@
+export { createOllamaClient, DEFAULT_OLLAMA_TIMEOUT_MS } from "./client";
 export {
-  extractText,
+  extractFields,
   INVALID_JSON_ERROR,
   type ChatClient,
   type Extraction,
+  type ExtractionInput,
   type ExtractionSettings,
-  type TextExtractionInput,
+  type ExtractionSource,
 } from "./extract";
 export { normalisePrinted, parsePrintedNumber, toPrintedSchema, type PrintedUnit } from "./printed";
-export { buildTextPrompt, PROMPT_VERSION } from "./prompt";
+export {
+  buildTextPrompt,
+  buildVisionPrompt,
+  PROMPT_VERSION,
+  VISION_PROMPT_VERSION,
+} from "./prompt";

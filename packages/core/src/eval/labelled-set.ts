@@ -18,6 +18,8 @@ export type Label = z.infer<typeof labelSchema>;
 
 export interface LabelledDocument {
   id: string;
+  /** The directory's name, e.g. synthetic or scanned */
+  set: string;
   pdfPath: string;
   documentType: string;
   source: Label["source"];
@@ -85,6 +87,7 @@ export async function loadLabelledSet(dir: string): Promise<LabelledDocument[]> 
 
     documents.push({
       id,
+      set: basename(dir),
       pdfPath,
       documentType: label.data.document_type,
       source: label.data.source,

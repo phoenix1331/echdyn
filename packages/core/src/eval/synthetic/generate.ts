@@ -6,11 +6,14 @@ import { createRandom } from "../random";
 import { generateBill } from "./bill";
 import { layouts } from "./layouts";
 import { renderPdf } from "./render";
+import { scanPdf } from "./scan";
 
 export interface GenerateOptions {
   count: number;
   seed: number;
   outDir: string;
+  /** Also write each bill as an image-only scan here, with the same labels */
+  scannedDir?: string;
 }
 
 export interface GeneratedBill {
@@ -52,13 +55,45 @@ export async function generateSyntheticBills({
   return bills;
 }
 
-export async function writeSyntheticSet(options: GenerateOptions): Promise<GeneratedBill[]> {
-  const bills = await generateSyntheticBills(options);
-  await mkdir(options.outDir, { recursive: true });
+/** The same bills as scans: identical ground truth, no text layer, layout marked scanned */
+export async function scanBills(
+  bills: readonly GeneratedBill[],
+  seed: number,
+): Promise<GeneratedBill[]> {
+  // Its own stream, so adding scans never changes the clean bills a seed produces
+  const random = createRandom(seed + 1);
+  const scanned: GeneratedBill[] = [];
 
   for (const { id, pdf, label } of bills) {
-    await writeFile(join(options.outDir, `${id}.pdf`), pdf);
-    await writeFile(join(options.outDir, `${id}.json`), `${JSON.stringify(label, null, 2)}\n`);
+    scanned.push({
+      id,
+      pdf: await scanPdf(pdf, random),
+      label: {
+        ...label,
+        layout: `${label.layout ?? label.source} (scanned)`,
+        notes: `${label.notes ?? id}, scanned`,
+      },
+    });
+  }
+
+  return scanned;
+}
+
+async function writeSet(dir: string, bills: readonly GeneratedBill[]): Promise<void> {
+  await mkdir(dir, { recursive: true });
+
+  for (const { id, pdf, label } of bills) {
+    await writeFile(join(dir, `${id}.pdf`), pdf);
+    await writeFile(join(dir, `${id}.json`), `${JSON.stringify(label, null, 2)}\n`);
+  }
+}
+
+export async function writeSyntheticSet(options: GenerateOptions): Promise<GeneratedBill[]> {
+  const bills = await generateSyntheticBills(options);
+  await writeSet(options.outDir, bills);
+
+  if (options.scannedDir) {
+    await writeSet(options.scannedDir, await scanBills(bills, options.seed));
   }
 
   return bills;
