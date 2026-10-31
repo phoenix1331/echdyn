@@ -20,6 +20,8 @@ export interface DocumentTypeDefinition<TSchema extends z.ZodObject = z.ZodObjec
   rules: readonly BusinessRule<z.infer<TSchema>>[];
   /** Review screen labels and units; fields without one get a label made from their name */
   display?: Readonly<Partial<Record<keyof z.infer<TSchema> & string, FieldDisplay>>>;
+  /** The few fields that identify a record at a glance, for lists */
+  summary?: readonly (keyof z.infer<TSchema> & string)[];
   extraction?: {
     /** Appended to the system prompt: where to look and which look-alike values to ignore */
     hints?: readonly string[];

@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, gte, lt, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, lt, or, sql, type SQL } from "drizzle-orm";
 import type { Database, Executor } from "../db/client";
 import { corrections, documents, documentTypes, records } from "../db/schema";
 import type { FieldFilter, FieldOperator, RecordQuery } from "./query";
@@ -43,6 +43,11 @@ const COMPARE: Record<Exclude<FieldOperator, "contains">, SQL> = {
   lte: sql.raw("<="),
 };
 
+/** An ilike pattern matching `text` anywhere, with its own % and _ taken literally */
+function contains(text: string): string {
+  return `%${text.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+}
+
 /**
  * One field filter as SQL on `records.data`. The field name is bound as a parameter of
  * `->>` and has already been checked against the type's schema; numbers compare as numeric,
@@ -51,8 +56,7 @@ const COMPARE: Record<Exclude<FieldOperator, "contains">, SQL> = {
 function fieldCondition({ field, operator, value, kind }: FieldFilter): SQL {
   const text = sql`${records.data} ->> ${field}`;
   if (operator === "contains") {
-    const escaped = String(value).replace(/[\\%_]/g, (c) => `\\${c}`);
-    return sql`${text} ilike ${`%${escaped}%`}`;
+    return sql`${text} ilike ${contains(String(value))}`;
   }
   if (kind === "number") {
     return sql`(${text})::numeric ${COMPARE[operator]} ${value}`;
@@ -76,6 +80,18 @@ function conditions(query: Omit<RecordQuery, "page" | "pageSize">): SQL[] {
   }
   if (query.approvedTo) {
     where.push(lt(records.approvedAt, nextDay(query.approvedTo)));
+  }
+  if (query.search) {
+    const pattern = contains(query.search);
+    // Each value as text, never the keys: searching "rate" must not match every bill because
+    // they all have a unit_rate_pence field
+    const anywhere = or(
+      ilike(documents.originalFilename, pattern),
+      sql`exists (select 1 from jsonb_each_text(${records.data}) as field where field.value ilike ${pattern})`,
+    );
+    if (anywhere) {
+      where.push(anywhere);
+    }
   }
   return [...where, ...query.fields.map(fieldCondition)];
 }
@@ -137,6 +153,7 @@ export async function listRecords(db: Database, query: RecordQuery): Promise<Rec
     db
       .select({ total: count() })
       .from(records)
+      .innerJoin(documents, eq(records.documentId, documents.id))
       .innerJoin(documentTypes, eq(records.documentTypeId, documentTypes.id))
       .where(where),
   ]);

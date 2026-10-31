@@ -109,6 +109,7 @@ export const energyBill: DocumentTypeDefinition<typeof energyBillSchema> = {
   version: 1,
   schema: energyBillSchema,
   rules: energyBillRules,
+  summary: ["supplier", "billing_period_end", "total_gbp"],
   display: {
     supplier: { label: "Supplier" },
     account_number: { label: "Account number" },

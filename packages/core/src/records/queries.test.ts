@@ -133,6 +133,18 @@ describe.skipIf(!testUrl)("record queries", () => {
     ]);
   });
 
+  it("searches file names and every value in the record, case-insensitively and literally", async () => {
+    expect(await list("q=VALLEY")).toEqual(["dear"]);
+    expect(await list("q=dearer")).toEqual(["dearer"]);
+    expect(await list("q=41.2")).toEqual(["dearer"]);
+    expect(await list("q=100%25")).toEqual(["dearer"]);
+    // Keys are not searched: every record has unit_rate_pence
+    expect(await list("q=_")).toEqual([]);
+    expect(await list("q=rate")).toEqual([]);
+    const page = await listRecords(db, parseRecordQuery(new URLSearchParams("q=ltd")));
+    expect(page.total).toBe(2);
+  });
+
   it("filters by approval day, both ends inclusive", async () => {
     expect(await list("approved_from=2026-10-15")).toEqual(["dearer", "elsewhere", "dear"]);
     // 23:30 on the 31st still counts as approved on the 31st

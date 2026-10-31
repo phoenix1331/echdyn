@@ -30,6 +30,7 @@ describe.skipIf(!testUrl)("getDocumentReview", () => {
         sha256: "a".repeat(64),
         status: "needs_review",
         hasTextLayer: true,
+        pageKinds: ["text"],
         flags: [{ field: "total_gbp", message: "Run 1: Subtotal + VAT = £10.00", rule: "x" }],
       })
       .returning();
@@ -75,6 +76,7 @@ describe.skipIf(!testUrl)("getDocumentReview", () => {
       status: "needs_review",
       storageKey: "uk-energy-bill/ab/abc.pdf",
       hasTextLayer: true,
+      pageKinds: ["text"],
       flags: [{ field: "total_gbp", rule: "x" }],
     });
     expect(review?.schema).toEqual(schema);
@@ -85,6 +87,7 @@ describe.skipIf(!testUrl)("getDocumentReview", () => {
         promptVersion: "text-v2",
         parsed: { total_gbp: 12.5 },
         printed: { total_gbp: "£12.50" },
+        createdAt: new Date(Date.UTC(2026, 9, 30, 9, 0)),
       }),
       expect.objectContaining({ runNumber: 2, parsed: null, printed: null }),
     ]);

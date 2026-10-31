@@ -1,17 +1,21 @@
 import Link from "next/link";
 import { logout } from "@/app/login/actions";
 import { Logo } from "@/components/logo";
+import { MainNav } from "@/components/main-nav";
 
 export function SiteHeader() {
   return (
     <header className="bg-quarry text-on-quarry">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 md:px-8">
-        <Link
-          href="/"
-          className="rounded transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
-        >
-          <Logo className="h-7 w-auto" />
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link
+            href="/"
+            className="rounded transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
+          >
+            <Logo className="h-7 w-auto" />
+          </Link>
+          <MainNav />
+        </div>
         <div className="flex items-center gap-2">
           <Link
             href="/upload"

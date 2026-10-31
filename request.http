@@ -138,6 +138,12 @@ Authorization: Bearer {{apiToken}}
 
 ###
 
+# Search the file name and every value in the records (not field names), case-insensitively
+GET {{baseUrl}}/api/records?q=northern
+Authorization: Bearer {{apiToken}}
+
+###
+
 # Unit rate above 30p: field filters are field:operator:value, checked against the type's schema,
 # so they need a type. Numbers and dates take eq, ne, gt, gte, lt, lte; text takes eq, ne, contains
 GET {{baseUrl}}/api/records?type=uk-energy-bill&filter=unit_rate_pence:gt:30

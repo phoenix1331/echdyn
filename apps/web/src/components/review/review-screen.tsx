@@ -201,6 +201,14 @@ export async function ReviewScreen({
           {runs.length > 0 && (
             <>
               <LabelledNotice labelled={labelled} />
+              {review.record && (
+                <Link
+                  href={`/records/${review.record.id}`}
+                  className="self-start text-sm font-medium text-slate underline underline-offset-4 hover:text-ink"
+                >
+                  View the record and its audit trail
+                </Link>
+              )}
               <Summary view={view} />
               {document.status === "needs_review" ? (
                 <ReviewForm

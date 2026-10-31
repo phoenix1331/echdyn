@@ -32,6 +32,7 @@ const run = (
   printed,
   validationErrors: [],
   durationMs: 1000,
+  createdAt: new Date(Date.UTC(2026, 9, 30, 9)),
 });
 
 const review = (

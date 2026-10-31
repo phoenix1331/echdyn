@@ -118,6 +118,31 @@ test("a file picked on the upload page is summarised, uploaded, reviewed and app
   await expect(page.getByRole("row", { name: /sample-energy-bill\.pdf/ })).toContainText(
     "Approved",
   );
+
+  // The record is searchable by any value, and its audit trail shows how it was reached
+  await page
+    .getByRole("navigation", { name: "Main" })
+    .getByRole("link", { name: "Records" })
+    .click();
+  // The page compiles on first visit: wait for it before searching
+  await expect(page.getByRole("heading", { name: "Records", level: 1 })).toBeVisible();
+  await page.getByRole("searchbox").fill("AC-1029384");
+  await page.getByRole("button", { name: "Search" }).click();
+  const record = page.getByRole("row", { name: /Northern Power Ltd/ });
+  await expect(record).toContainText("£386.88");
+  await expect(record.getByRole("link", { name: /^PDF/ })).toHaveAttribute(
+    "href",
+    `/documents/${id}/pdf`,
+  );
+  await record.click();
+
+  const trail = page.getByRole("heading", { name: "Audit trail" }).locator("..");
+  await expect(trail).toContainText("Uploaded sample-energy-bill.pdf");
+  await expect(trail).toContainText("Checks flagged");
+  await expect(trail).toContainText("admin corrected VAT");
+  await expect(trail).toContainText("Approved by admin");
+  // Scoped to the visible main: Next keeps the previous page mounted, hidden
+  await expect(page.getByRole("main").getByText("Corrected by admin, was £386.88")).toBeVisible();
 });
 
 test("an example shows a mixed bill in the summary, and Cancel stores nothing", async ({

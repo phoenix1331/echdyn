@@ -8,6 +8,7 @@ import {
   extractions,
   records,
   type FieldError,
+  type PageKind,
 } from "../db/schema";
 import { getDocumentSummary, type DocumentSummary } from "./queries";
 
@@ -21,6 +22,7 @@ export interface ReviewRun {
   printed: Record<string, unknown> | null;
   validationErrors: FieldError[];
   durationMs: number;
+  createdAt: Date;
 }
 
 export interface ReviewCorrection {
@@ -42,6 +44,7 @@ export interface DocumentReview {
   document: DocumentSummary & {
     storageKey: string;
     hasTextLayer: boolean | null;
+    pageKinds: PageKind[] | null;
     flags: FieldError[];
   };
   /** The JSON Schema stored with the document type version, which fixes field order */
@@ -78,6 +81,7 @@ export async function getDocumentReview(db: Database, id: string): Promise<Docum
       .select({
         storageKey: documents.storageKey,
         hasTextLayer: documents.hasTextLayer,
+        pageKinds: documents.pageKinds,
         flags: documents.flags,
         schema: documentTypes.schema,
       })
@@ -124,6 +128,7 @@ export async function getDocumentReview(db: Database, id: string): Promise<Docum
       printed: parseObject(row.rawOutput),
       validationErrors: row.validationErrors,
       durationMs: row.durationMs,
+      createdAt: row.createdAt,
     }));
 
   const { schema, ...documentExtra } = extra;

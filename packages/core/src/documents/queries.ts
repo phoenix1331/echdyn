@@ -226,3 +226,18 @@ export async function estimateProcessingMs(db: Database, sample = 20): Promise<n
   const median = rows[0]?.median;
   return median === null || median === undefined ? null : Math.round(median);
 }
+
+/** Where a document's PDF is stored, for a download link; null for an unknown document */
+export async function getDocumentFile(
+  db: Database,
+  id: string,
+): Promise<{ storageKey: string; filename: string } | null> {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) {
+    return null;
+  }
+  const [row] = await db
+    .select({ storageKey: documents.storageKey, filename: documents.originalFilename })
+    .from(documents)
+    .where(eq(documents.id, id));
+  return row ?? null;
+}

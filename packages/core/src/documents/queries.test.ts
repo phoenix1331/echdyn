@@ -4,6 +4,7 @@ import { createDatabase } from "../db/client";
 import { documents, documentTypes, extractions, type DocumentStatus } from "../db/schema";
 import {
   countDocumentsByStatus,
+  getDocumentFile,
   estimateProcessingMs,
   getDocumentSummary,
   listDocuments,
@@ -229,5 +230,18 @@ describe.skipIf(!testUrl)("document queries", () => {
 
       expect(await estimateProcessingMs(db, 1)).toBe(30_000);
     });
+  });
+
+  it("finds a document's stored file, and nothing for an unknown or malformed id", async () => {
+    const id = await insertDocument("march.pdf", "approved", {
+      storageKey: "uk-energy-bill/ab/abc.pdf",
+    });
+
+    expect(await getDocumentFile(db, id)).toEqual({
+      storageKey: "uk-energy-bill/ab/abc.pdf",
+      filename: "march.pdf",
+    });
+    expect(await getDocumentFile(db, "00000000-0000-0000-0000-000000000000")).toBeNull();
+    expect(await getDocumentFile(db, "nope")).toBeNull();
   });
 });

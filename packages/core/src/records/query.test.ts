@@ -85,6 +85,11 @@ describe("parseRecordQuery", () => {
     expect(() => parseRecordQuery(params(query))).toThrow(message);
   });
 
+  it("reads a text search", () => {
+    expect(parseRecordQuery(params("q=%20northern%20")).search).toBe("northern");
+    expect(parseRecordQuery(params("q=%20"))).not.toHaveProperty("search");
+  });
+
   it("ignores blank values", () => {
     expect(parseRecordQuery(params("type=&approved_to=&page=&page_size= "))).toEqual({
       fields: [],

@@ -4,6 +4,7 @@ export {
   DEFAULT_PAGE_SIZE,
   DOCUMENT_STATUSES,
   estimateProcessingMs,
+  getDocumentFile,
   getDocumentSummary,
   listDocuments,
   listDocumentTypeOptions,

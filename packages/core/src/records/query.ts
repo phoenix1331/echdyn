@@ -13,6 +13,8 @@ export interface FieldFilter {
 export interface RecordQuery {
   /** Document type slug; required for field filters, which are checked against its schema */
   documentType?: string;
+  /** Matched, case-insensitively, against the file name and every value in the record */
+  search?: string;
   /** Approved on or after this day (YYYY-MM-DD) */
   approvedFrom?: string;
   /** Approved on or before this day, inclusive */
@@ -147,8 +149,11 @@ export function parseRecordQuery(params: URLSearchParams): RecordQuery {
     throw new RecordQueryError("approved_from is after approved_to");
   }
 
+  const search = params.get("q")?.trim() || undefined;
+
   return {
     ...(documentType ? { documentType } : {}),
+    ...(search ? { search } : {}),
     ...(approvedFrom ? { approvedFrom } : {}),
     ...(approvedTo ? { approvedTo } : {}),
     fields: raw.map((value) => parseFieldFilter(value, documentType ?? "")),
