@@ -9,7 +9,7 @@ import { createOllamaClient, PROMPT_VERSION, VISION_PROMPT_VERSION } from "../ex
 import { createStorage } from "../storage";
 
 const evalDir = resolve(import.meta.dirname, "../../../../eval");
-const defaultSets = ["sets/synthetic", "sets/scanned", "sets/private"]
+const defaultSets = ["sets/synthetic", "sets/scanned", "sets/mixed", "sets/private"]
   .map((set) => resolve(evalDir, set))
   .filter((dir) => existsSync(dir));
 
@@ -42,14 +42,18 @@ const limitFor = (set: string): number => {
   const value = named?.[1] ?? global?.[0];
   return value === undefined ? Infinity : Number(value);
 };
-const sets = await Promise.all(
-  setDirs.map(async (dir) => ({
-    name: basename(dir),
-    documents: (await loadLabelledSet(dir)).slice(0, limitFor(basename(dir))),
-  })),
-);
+// A set limited to 0 is skipped entirely, e.g. LIMIT="scanned=0 mixed=0" for text only
+const sets = (
+  await Promise.all(
+    setDirs.map(async (dir) => ({
+      name: basename(dir),
+      documents: (await loadLabelledSet(dir)).slice(0, limitFor(basename(dir))),
+    })),
+  )
+).filter((set) => set.documents.length > 0);
 const documents = sets.flatMap((s) => s.documents);
-const hasScans = sets.some((s) => s.name === "scanned");
+// Scanned and mixed sets both go through the vision model
+const hasScans = sets.some((s) => s.name === "scanned" || s.name === "mixed");
 
 const storage = createStorage({ ...config, S3_BUCKET: `${config.S3_BUCKET}-eval` });
 await storage.ensureBucket();

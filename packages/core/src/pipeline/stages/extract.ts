@@ -4,6 +4,7 @@ import {
   type ExtractionSettings,
   type ExtractionSource,
 } from "../../extraction/extract";
+import type { MixedPage } from "../../extraction/prompt";
 import type { PipelineContext, PipelineStage } from "../pipeline";
 
 export interface ExtractStageSettings extends ExtractionSettings {
@@ -11,19 +12,41 @@ export interface ExtractStageSettings extends ExtractionSettings {
   visionModel?: string;
 }
 
-/** The text layer when there is one, else the rendered pages if a vision model can read them */
+/**
+ * Chosen from the page kinds: all typed pages go to the text model; scanned pages need the
+ * vision model, alone (all scanned) or with the typed pages beside them (mixed). Without a
+ * vision model a mixed document still gets its typed pages read, as before.
+ */
 function sourceFor(
   ctx: PipelineContext,
   settings: ExtractStageSettings,
 ): { source: ExtractionSource; model: string } | null {
-  if (ctx.text?.hasTextLayer) {
-    return { source: { kind: "text", pages: ctx.text.pages }, model: settings.model };
-  }
-  const images = ctx.pages?.map((page) => page.png) ?? [];
-  if (images.length === 0 || !settings.visionModel) {
+  if (!ctx.text) {
     return null;
   }
-  return { source: { kind: "images", images }, model: settings.visionModel };
+  const { pages: texts, pageKinds } = ctx.text;
+  const typed = pageKinds.flatMap((kind, i) => (kind === "text" ? [i + 1] : []));
+  const textOnly = {
+    source: { kind: "text" as const, pages: typed.map((n) => texts[n - 1] ?? "") },
+    model: settings.model,
+  };
+  const scans = ctx.pages ?? [];
+
+  if (scans.length === 0 || !settings.visionModel) {
+    return typed.length > 0 ? textOnly : null;
+  }
+  if (typed.length === 0) {
+    return {
+      source: { kind: "images", images: scans.map((page) => page.png) },
+      model: settings.visionModel,
+    };
+  }
+
+  const pages: MixedPage[] = [
+    ...typed.map((pageNumber) => ({ pageNumber, text: texts[pageNumber - 1] ?? "" })),
+    ...scans.map((page) => ({ pageNumber: page.pageNumber, image: page.png })),
+  ].sort((a, b) => a.pageNumber - b.pageNumber);
+  return { source: { kind: "mixed", pages }, model: settings.visionModel };
 }
 
 export function createExtractStage(settings: ExtractStageSettings): PipelineStage {

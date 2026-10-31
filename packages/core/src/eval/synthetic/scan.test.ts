@@ -6,7 +6,8 @@ import { describe, expect, it } from "vitest";
 import { extractPdfText } from "../../pipeline/stages/pre-process";
 import { loadLabelledSet } from "../labelled-set";
 import { createRandom } from "../random";
-import { generateSyntheticBills, scanBills, writeSyntheticSet } from "./generate";
+import { generateSyntheticBills, mixBills, scanBills, writeSyntheticSet } from "./generate";
+import { withCoverLetter } from "./mixed";
 import { scanPdf } from "./scan";
 
 describe("scanPdf", () => {
@@ -68,6 +69,46 @@ describe("scanned set", () => {
         layout: string;
       };
       expect(label.layout).toContain("(scanned)");
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("mixed set", () => {
+  it("puts a typed cover letter in front of the scanned bill", async () => {
+    const [bill] = await generateSyntheticBills({ count: 1, seed: 7 });
+    const scanned = await scanPdf(bill?.pdf ?? new Uint8Array(), createRandom(1));
+
+    const mixed = await withCoverLetter(scanned, "Cymru Gas & Power");
+
+    const text = await extractPdfText(mixed);
+    expect(text.pageKinds).toEqual(["text", ...Array<string>(text.pageCount - 1).fill("scan")]);
+    expect(text.pages[0]).toContain("Cymru Gas & Power");
+    // No figure is typed: the letter alone cannot answer anything but the supplier
+    expect(text.pages[0]).not.toMatch(/\d+\.\d{2}/);
+  });
+
+  it("keeps the ground truth and marks the layout as mixed", async () => {
+    const bills = await generateSyntheticBills({ count: 1, seed: 7 });
+
+    const [mixed] = await mixBills(bills, 7);
+
+    expect(mixed?.label.expected).toEqual(bills[0]?.label.expected);
+    expect(mixed?.label.layout).toBe(`${bills[0]?.label.layout ?? ""} (mixed)`);
+  });
+
+  it("is written beside the other sets when asked", async () => {
+    const root = await mkdtemp(join(tmpdir(), "echdyn-mixed-"));
+    try {
+      await writeSyntheticSet({
+        count: 1,
+        seed: 7,
+        outDir: join(root, "synthetic"),
+        mixedDir: join(root, "mixed"),
+      });
+
+      expect((await loadLabelledSet(join(root, "mixed"))).map((d) => d.set)).toEqual(["mixed"]);
     } finally {
       await rm(root, { recursive: true, force: true });
     }

@@ -1,0 +1,20 @@
+{
+  "document_type": "uk-energy-bill",
+  "source": "synthetic",
+  "layout": "Northern Power Ltd (mixed)",
+  "notes": "Northern Power Ltd, electricity, 1 page, typed cover letter then scanned bill",
+  "expected": {
+    "supplier": "Northern Power Ltd",
+    "account_number": "AC-6425835",
+    "meter_point_number": "8632618678078",
+    "billing_period_start": "2026-12-03",
+    "billing_period_end": "2027-01-04",
+    "consumption_kwh": 4298,
+    "unit_rate_pence": 33.57,
+    "standing_charge_pence_per_day": 41.88,
+    "subtotal_gbp": 1456.66,
+    "vat_rate_percent": 20,
+    "vat_gbp": 291.33,
+    "total_gbp": 1747.99
+  }
+}

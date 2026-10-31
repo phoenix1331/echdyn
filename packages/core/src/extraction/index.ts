@@ -17,8 +17,11 @@ export {
   type PrintedUnit,
 } from "./printed";
 export {
+  buildMixedPrompt,
   buildTextPrompt,
   buildVisionPrompt,
+  MIXED_PROMPT_VERSION,
   PROMPT_VERSION,
   VISION_PROMPT_VERSION,
+  type MixedPage,
 } from "./prompt";

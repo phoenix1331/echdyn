@@ -1,0 +1,20 @@
+{
+  "document_type": "uk-energy-bill",
+  "source": "synthetic",
+  "layout": "Cymru Gas & Power (mixed)",
+  "notes": "Cymru Gas & Power, electricity, 1 page, typed cover letter then scanned bill",
+  "expected": {
+    "supplier": "Cymru Gas & Power",
+    "account_number": "87146970",
+    "meter_point_number": "4495595932466",
+    "billing_period_start": "2026-09-10",
+    "billing_period_end": "2026-10-09",
+    "consumption_kwh": 2624.9,
+    "unit_rate_pence": 22.39,
+    "standing_charge_pence_per_day": 84.99,
+    "subtotal_gbp": 613.22,
+    "vat_rate_percent": 20,
+    "vat_gbp": 122.64,
+    "total_gbp": 735.86
+  }
+}

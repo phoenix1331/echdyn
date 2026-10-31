@@ -6,6 +6,7 @@ import { createRandom } from "../random";
 import { generateBill } from "./bill";
 import { layouts } from "./layouts";
 import { renderPdf } from "./render";
+import { withCoverLetter } from "./mixed";
 import { scanPdf } from "./scan";
 
 export interface GenerateOptions {
@@ -14,6 +15,8 @@ export interface GenerateOptions {
   outDir: string;
   /** Also write each bill as an image-only scan here, with the same labels */
   scannedDir?: string;
+  /** Also write each bill as a typed cover letter plus the scanned bill here */
+  mixedDir?: string;
 }
 
 export interface GeneratedBill {
@@ -79,6 +82,34 @@ export async function scanBills(
   return scanned;
 }
 
+/**
+ * The same bills behind a typed cover letter: a mixed document whose figures are all on the
+ * scanned page, which reading per document used to miss entirely
+ */
+export async function mixBills(
+  bills: readonly GeneratedBill[],
+  seed: number,
+): Promise<GeneratedBill[]> {
+  // Its own stream again, so neither the clean nor the scanned set changes
+  const random = createRandom(seed + 2);
+  const mixed: GeneratedBill[] = [];
+
+  for (const { id, pdf, label } of bills) {
+    const supplier = label.layout ?? label.source;
+    mixed.push({
+      id,
+      pdf: await withCoverLetter(await scanPdf(pdf, random), supplier),
+      label: {
+        ...label,
+        layout: `${supplier} (mixed)`,
+        notes: `${label.notes ?? id}, typed cover letter then scanned bill`,
+      },
+    });
+  }
+
+  return mixed;
+}
+
 async function writeSet(dir: string, bills: readonly GeneratedBill[]): Promise<void> {
   await mkdir(dir, { recursive: true });
 
@@ -94,6 +125,9 @@ export async function writeSyntheticSet(options: GenerateOptions): Promise<Gener
 
   if (options.scannedDir) {
     await writeSet(options.scannedDir, await scanBills(bills, options.seed));
+  }
+  if (options.mixedDir) {
+    await writeSet(options.mixedDir, await mixBills(bills, options.seed));
   }
 
   return bills;

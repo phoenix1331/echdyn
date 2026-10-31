@@ -6,6 +6,7 @@ Ground truth for measuring extraction accuracy. Each set is a directory of PDFs,
 | ----------------- | ----------------------------------------------------------------------------- | --------------- |
 | `sets/synthetic/` | 30 generated UK energy bills (`make eval-generate`, seed 1331)                | Yes             |
 | `sets/scanned/`   | The same 30 bills as image-only scans, same labels, layout marked `(scanned)` | Yes             |
+| `sets/mixed/`     | The same 30 bills as a typed cover letter followed by the scanned bill        | Yes             |
 | `sets/private/`   | Your own real documents and labels                                            | No (gitignored) |
 
 ## Label format
@@ -58,17 +59,22 @@ Three supplier layouts with different labels, date formats (`01/08/2026`, `1 Aug
 
 ## Scanned bills
 
-`make eval-generate` also writes `sets/scanned/`: each synthetic bill rasterised at 150 DPI, tilted by up to a degree on off-white paper, speckled and saved as JPEG pages in an image-only PDF. With no text layer, the pipeline renders the pages and sends them to the vision model (`OLLAMA_VISION_MODEL`), so this set measures the vision path against exactly the ground truth the text set uses.
+`make eval-generate` also writes `sets/scanned/` and `sets/mixed/`. Scanned bills are each synthetic bill rasterised at 150 DPI, tilted by up to a degree on off-white paper, speckled and saved as JPEG pages in an image-only PDF. With no text layer, the pipeline renders the pages and sends them to the vision model (`OLLAMA_VISION_MODEL`), so this set measures the vision path against exactly the ground truth the text set uses.
 
 ## Running the eval
 
 `make eval` runs every set present. Text documents are read by each model in `MODELS`, scans by `VISION_MODEL` (default `OLLAMA_VISION_MODEL`). The report shows each set apart, with the model that actually read it.
 
-| Example                              | Runs                                   |
-| ------------------------------------ | -------------------------------------- |
-| `make eval`                          | Everything, with the models in `.env`  |
-| `make eval MODELS=llama3.2,qwen3:8b` | Two text models, same vision model     |
-| `make eval LIMIT=5`                  | The first 5 documents of every set     |
-| `make eval LIMIT=scanned=5`          | Every text document, the first 5 scans |
+| Example                               | Runs                                   |
+| ------------------------------------- | -------------------------------------- |
+| `make eval`                           | Everything, with the models in `.env`  |
+| `make eval MODELS=llama3.2,qwen3:8b`  | Two text models, same vision model     |
+| `make eval LIMIT=5`                   | The first 5 documents of every set     |
+| `make eval LIMIT=scanned=5`           | Every text document, the first 5 scans |
+| `make eval LIMIT="scanned=5 mixed=5"` | Every text document, 5 scans, 5 mixed  |
 
 Vision on CPU is slow (minutes per scan), so limit the scanned set on machines without a GPU.
+
+## Mixed bills
+
+`sets/mixed/` puts a typed cover letter (the supplier's name and a short letter, no figures) in front of each scanned bill. Every figure is on the scanned page. Pages are classified one by one (text, scan or blank), so the letter goes to the model as text and the bill as an image, in one request. Before that, the letter's text made the whole document look typed and the bill was never read.

@@ -50,6 +50,8 @@ export interface RenderOptions {
   dpi?: number;
   maxEdge?: number;
   maxPages?: number;
+  /** Only these pages (1-based), e.g. the scanned pages of a mixed document; default all */
+  pageNumbers?: readonly number[];
 }
 
 /** Renders each page to a PNG on a white background, as a scanner would produce */
@@ -57,7 +59,12 @@ export async function renderPdfPages(
   file: Uint8Array,
   options: RenderOptions = {},
 ): Promise<PageImage[]> {
-  const { dpi = RENDER_DPI, maxEdge = MAX_PAGE_EDGE_PX, maxPages = MAX_RENDERED_PAGES } = options;
+  const {
+    dpi = RENDER_DPI,
+    maxEdge = MAX_PAGE_EDGE_PX,
+    maxPages = MAX_RENDERED_PAGES,
+    pageNumbers,
+  } = options;
   // pdfjs transfers (detaches) the buffer it is given, so hand it a copy
   const task = getDocument({
     data: new Uint8Array(file),
@@ -69,7 +76,11 @@ export async function renderPdfPages(
     const pdf = await task.promise;
     const images: PageImage[] = [];
 
-    for (let number = 1; number <= Math.min(pdf.numPages, maxPages); number++) {
+    const wanted = (pageNumbers ?? Array.from({ length: pdf.numPages }, (_, i) => i + 1))
+      .filter((number) => number >= 1 && number <= pdf.numPages)
+      .slice(0, maxPages);
+
+    for (const number of wanted) {
       const page = await pdf.getPage(number);
       const natural = page.getViewport({ scale: 1 });
       const scale = Math.min(dpi / 72, maxEdge / Math.max(natural.width, natural.height));
@@ -94,18 +105,22 @@ export async function renderPdfPages(
 }
 
 /**
- * Scans have no text layer for the text model, so their pages are rendered for the
- * vision model and stored beside the PDF. Documents with text skip this stage.
+ * Scanned pages have no text for the text model, so they are rendered for the vision model
+ * and stored beside the PDF. Text and blank pages are not rendered; all-text documents skip
+ * this stage.
  */
 export const renderPagesStage: PipelineStage = {
   name: "render",
   label: "Rendering pages",
   async run(ctx) {
-    if (!ctx.text || ctx.text.hasTextLayer) {
+    const scanned = (ctx.text?.pageKinds ?? []).flatMap((kind, i) =>
+      kind === "scan" ? [i + 1] : [],
+    );
+    if (scanned.length === 0) {
       return;
     }
 
-    const images = await renderPdfPages(ctx.file);
+    const images = await renderPdfPages(ctx.file, { pageNumbers: scanned });
     const pages = images.map((image) => ({
       ...image,
       storageKey: pageImageKey(ctx.documentType.slug, ctx.document.sha256, image.pageNumber),

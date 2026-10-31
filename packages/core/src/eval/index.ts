@@ -13,8 +13,10 @@ export {
   writeSyntheticSet,
   type GeneratedBill,
   type GenerateOptions,
+  mixBills,
   scanBills,
 } from "./synthetic/generate";
+export { withCoverLetter } from "./synthetic/mixed";
 export { scanPdf } from "./synthetic/scan";
 export { renderReport, type ReportMeta } from "./report";
 export { runEval, type EvalOptions, type EvalRun } from "./run";

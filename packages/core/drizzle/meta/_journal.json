@@ -29,6 +29,13 @@
       "when": 1793444756323,
       "tag": "0003_document-pages",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793476482870,
+      "tag": "0004_page-kinds",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildMixedPrompt,
   buildTextPrompt,
   buildVisionPrompt,
+  MIXED_PROMPT_VERSION,
   PROMPT_VERSION,
   VISION_PROMPT_VERSION,
 } from "./prompt";
@@ -70,5 +72,42 @@ describe("buildVisionPrompt", () => {
   it("is versioned apart from the text prompt", () => {
     expect(VISION_PROMPT_VERSION).toMatch(/^vision-v\d+$/);
     expect(VISION_PROMPT_VERSION).not.toBe(PROMPT_VERSION);
+  });
+});
+
+describe("buildMixedPrompt", () => {
+  const image = new Uint8Array([1, 2, 3]);
+
+  it("sends typed pages as text and scanned pages as images, each named by page", () => {
+    const [system, user] = buildMixedPrompt("bill", [
+      { pageNumber: 1, text: "Dear customer" },
+      { pageNumber: 2, image },
+      { pageNumber: 3, text: "Terms" },
+    ]);
+
+    expect(user?.content).toContain("Pages 1 and 3 are typed: the text is below.");
+    expect(user?.content).toContain("Page 2 is scanned: the attached images, in order.");
+    expect(user?.content).toContain("--- page 1 ---\nDear customer\n\n--- page 3 ---\nTerms");
+    expect(user?.images).toEqual(["AQID"]);
+    // Read from an image, so dates and rates are copied as printed, as for scans
+    expect(system?.content).toContain("Copy dates exactly as printed");
+  });
+
+  it("lists longer runs of pages", () => {
+    const [, user] = buildMixedPrompt("bill", [
+      { pageNumber: 1, text: "a" },
+      { pageNumber: 2, image },
+      { pageNumber: 3, image },
+      { pageNumber: 4, image },
+    ]);
+
+    expect(user?.content).toContain("Page 1 is typed");
+    expect(user?.content).toContain("Pages 2, 3 and 4 are scanned");
+    expect(user?.images).toHaveLength(3);
+  });
+
+  it("is versioned apart from the text and vision prompts", () => {
+    expect(MIXED_PROMPT_VERSION).toMatch(/^mixed-v\d+$/);
+    expect([PROMPT_VERSION, VISION_PROMPT_VERSION]).not.toContain(MIXED_PROMPT_VERSION);
   });
 });

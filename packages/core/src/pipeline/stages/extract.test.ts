@@ -101,6 +101,41 @@ describe.skipIf(!testUrl || !testBucket)("extract stage", () => {
     });
   });
 
+  it("reads a mixed document's cover letter as text and its scanned bill as an image, in one call", async () => {
+    const id = await upload("mixed-energy-bill.pdf");
+    const client = fakeClient(['{"total_gbp": "£386.88"}']);
+
+    await processDocument({ db, storage }, id, [
+      preProcessStage,
+      renderPagesStage,
+      createExtractStage({ client, model: "llama3.2", visionModel: "qwen2.5vl:3b" }),
+    ]);
+
+    expect(client.requests).toHaveLength(1);
+    const user = client.requests[0]?.messages?.[1];
+    expect(client.requests[0]?.model).toBe("qwen2.5vl:3b");
+    expect(user?.content).toContain("Page 1 is typed");
+    expect(user?.content).toContain("Please find your latest energy statement enclosed");
+    expect(user?.images).toHaveLength(1);
+    const [row] = await db.select().from(extractions).where(eq(extractions.documentId, id));
+    expect(row?.promptVersion).toBe("mixed-v1");
+  });
+
+  it("still reads a mixed document's typed pages when there is no vision model", async () => {
+    const id = await upload("mixed-energy-bill.pdf");
+    const client = fakeClient(["{}"]);
+
+    await processDocument({ db, storage }, id, [
+      preProcessStage,
+      renderPagesStage,
+      createExtractStage({ client, model: "llama3.2" }),
+    ]);
+
+    expect(client.requests[0]?.model).toBe("llama3.2");
+    expect(client.requests[0]?.messages?.[1]?.content).toContain("--- page 1 ---");
+    expect(client.requests[0]?.messages?.[1]?.images).toBeUndefined();
+  });
+
   it("leaves a scan unread when no vision model is configured", async () => {
     const id = await upload("scanned-energy-bill.pdf");
     const client = fakeClient([]);

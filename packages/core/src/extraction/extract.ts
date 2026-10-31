@@ -1,13 +1,16 @@
-import type { ChatRequest, ChatResponse } from "ollama";
+import type { ChatRequest, ChatResponse, Message } from "ollama";
 import type { Database } from "../db/client";
 import { firstRow } from "../db/rows";
 import { extractions, type FieldError } from "../db/schema";
 import { normalisePrinted, toPrintedSchema, type PrintedUnit } from "./printed";
 import {
+  buildMixedPrompt,
   buildTextPrompt,
   buildVisionPrompt,
+  MIXED_PROMPT_VERSION,
   PROMPT_VERSION,
   VISION_PROMPT_VERSION,
+  type MixedPage,
 } from "./prompt";
 
 export type Extraction = typeof extractions.$inferSelect;
@@ -17,9 +20,17 @@ export interface ChatClient {
   chat: (request: ChatRequest & { stream?: false }) => Promise<ChatResponse>;
 }
 
-/** What the model reads: the text layer, or page images for a scan */
+/** What the model reads: the text layer, page images for a scan, or both for a mixed document */
 export type ExtractionSource =
-  { kind: "text"; pages: readonly string[] } | { kind: "images"; images: readonly Uint8Array[] };
+  | { kind: "text"; pages: readonly string[] }
+  | { kind: "images"; images: readonly Uint8Array[] }
+  | { kind: "mixed"; pages: readonly MixedPage[] };
+
+const PROMPTS = {
+  text: PROMPT_VERSION,
+  images: VISION_PROMPT_VERSION,
+  mixed: MIXED_PROMPT_VERSION,
+} as const;
 
 export interface ExtractionInput {
   documentId: string;
@@ -39,6 +50,16 @@ export interface ExtractionSettings {
   model: string;
   /** 0 for the primary run; a consistency run uses a little randomness so unsure fields disagree */
   temperature?: number;
+}
+
+function messagesFor({ source, documentTypeName, hints }: ExtractionInput): Message[] {
+  if (source.kind === "text") {
+    return buildTextPrompt(documentTypeName, source.pages, hints);
+  }
+  if (source.kind === "images") {
+    return buildVisionPrompt(documentTypeName, source.images, hints);
+  }
+  return buildMixedPrompt(documentTypeName, source.pages, hints);
 }
 
 export const INVALID_JSON_ERROR: FieldError = {
@@ -69,15 +90,13 @@ export async function extractFields(
   input: ExtractionInput,
 ): Promise<Extraction> {
   const { source } = input;
-  const messages =
-    source.kind === "text"
-      ? buildTextPrompt(input.documentTypeName, source.pages, input.hints)
-      : buildVisionPrompt(input.documentTypeName, source.images, input.hints);
+  const messages = messagesFor(input);
   const started = performance.now();
   const response = await client.chat({
     model,
     messages,
-    format: toPrintedSchema(input.jsonSchema, { dates: source.kind === "images" }),
+    // Only the text path keeps grammar-forced ISO dates; anything read from an image copies them
+    format: toPrintedSchema(input.jsonSchema, { dates: source.kind !== "text" }),
     stream: false,
     options: { temperature },
   });
@@ -92,7 +111,7 @@ export async function extractFields(
     .values({
       documentId: input.documentId,
       model,
-      promptVersion: source.kind === "text" ? PROMPT_VERSION : VISION_PROMPT_VERSION,
+      promptVersion: PROMPTS[source.kind],
       runNumber: input.runNumber,
       rawOutput,
       parsed,

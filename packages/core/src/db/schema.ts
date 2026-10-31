@@ -23,6 +23,9 @@ export const documentStatus = pgEnum("document_status", [
 
 export type DocumentStatus = (typeof documentStatus.enumValues)[number];
 
+/** How each page is read: its text layer, as a scan by the vision model, or not at all */
+export type PageKind = "text" | "scan" | "blank";
+
 export interface FieldError {
   field: string;
   message: string;
@@ -62,6 +65,8 @@ export const documents = pgTable(
     status: documentStatus("status").notNull().default("queued"),
     pageCount: integer("page_count"),
     hasTextLayer: boolean("has_text_layer"),
+    /** One entry per page, in order; null until pre-processed */
+    pageKinds: jsonb("page_kinds").$type<PageKind[]>(),
     error: text("error"),
     /** What the pipeline is doing right now, for progress display; cleared on every status change */
     stage: text("stage"),

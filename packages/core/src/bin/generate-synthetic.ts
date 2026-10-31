@@ -14,6 +14,10 @@ const { values } = parseArgs({
       type: "string",
       default: resolve(import.meta.dirname, "../../../../eval/sets/scanned"),
     },
+    "mixed-out": {
+      type: "string",
+      default: resolve(import.meta.dirname, "../../../../eval/sets/mixed"),
+    },
   },
 });
 
@@ -22,7 +26,9 @@ const bills = await writeSyntheticSet({
   seed: Number(values.seed),
   outDir: resolve(values.out),
   scannedDir: resolve(values["scanned-out"]),
+  mixedDir: resolve(values["mixed-out"]),
 });
 
 console.log(`wrote ${String(bills.length)} synthetic bills to ${resolve(values.out)}`);
 console.log(`wrote ${String(bills.length)} scanned copies to ${resolve(values["scanned-out"])}`);
+console.log(`wrote ${String(bills.length)} mixed copies to ${resolve(values["mixed-out"])}`);

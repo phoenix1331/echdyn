@@ -143,6 +143,29 @@ describe.skipIf(!testUrl)("extractFields", () => {
     });
   });
 
+  it("sends a mixed document's typed text and scanned images together under its own version", async () => {
+    const client = fakeClient(['{"total_gbp": "£386.88"}']);
+
+    const extraction = await extractFields(
+      db,
+      { client, model: "qwen2.5vl:3b" },
+      {
+        ...input(),
+        source: {
+          kind: "mixed",
+          pages: [
+            { pageNumber: 1, text: "Dear customer" },
+            { pageNumber: 2, image: new Uint8Array([0x89, 0x50, 0x4e, 0x47]) },
+          ],
+        },
+      },
+    );
+
+    expect(client.requests[0]?.messages?.[1]?.images).toEqual(["iVBORw=="]);
+    expect(client.requests[0]?.format).toEqual(toPrintedSchema(schema, { dates: true }));
+    expect(extraction.promptVersion).toBe("mixed-v1");
+  });
+
   it("throws transport errors without storing a row", async () => {
     const client = fakeClient([new Error("connect ECONNREFUSED ollama:11434")]);
 

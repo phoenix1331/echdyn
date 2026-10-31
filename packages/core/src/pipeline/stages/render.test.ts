@@ -73,6 +73,12 @@ describe("renderPdfPages", () => {
     expect(page?.width).toBe(353);
   });
 
+  it("renders only the pages asked for, skipping ones that do not exist", async () => {
+    const images = await renderPdfPages(await pages(4), { pageNumbers: [2, 4, 9], dpi: 20 });
+
+    expect(images.map((image) => image.pageNumber)).toEqual([2, 4]);
+  });
+
   it("stops at the page limit", async () => {
     const images = await renderPdfPages(await pages(4), { maxPages: 2, dpi: 20 });
 
@@ -154,6 +160,16 @@ describe.skipIf(!testUrl || !testBucket)("render stage", () => {
     await processDocument({ db, storage }, id, [preProcessStage, renderPagesStage]);
 
     expect(await db.select().from(documentPages)).toHaveLength(1);
+  });
+
+  it("renders only the scanned page of a mixed document", async () => {
+    const { id } = await ingest("mixed-energy-bill.pdf");
+
+    await processDocument({ db, storage }, id, [preProcessStage, renderPagesStage, capture]);
+
+    const rows = await db.select().from(documentPages);
+    expect(rows.map((row) => row.pageNumber)).toEqual([2]);
+    expect(seen?.pages?.map((page) => page.pageNumber)).toEqual([2]);
   });
 
   it("leaves documents with a text layer alone", async () => {

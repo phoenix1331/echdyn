@@ -68,5 +68,5 @@ fresh: ## Drop all tables, re-run migrations and seed
 eval-generate: ## Regenerate the synthetic labelled bill set in eval/sets/synthetic
 	@$(EXEC) pnpm eval:generate
 
-eval: ## Measure accuracy on the labelled sets (MODELS=a,b VISION_MODEL=m LIMIT=n or LIMIT=scanned=n)
-	@$(EXEC) pnpm eval $(if $(MODELS),--models $(MODELS)) $(if $(VISION_MODEL),--vision-model $(VISION_MODEL)) $(if $(LIMIT),--limit $(LIMIT))
+eval: ## Measure accuracy on the labelled sets (MODELS=a,b VISION_MODEL=m LIMIT="n" or LIMIT="scanned=n mixed=n")
+	@$(EXEC) pnpm eval $(if $(MODELS),--models $(MODELS)) $(if $(VISION_MODEL),--vision-model $(VISION_MODEL)) $(foreach limit,$(LIMIT),--limit $(limit))
