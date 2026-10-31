@@ -1,22 +1,27 @@
 @import "tailwindcss";
 
+/* The dev server writes a log under .next on every page load; scanning it rebuilt the CSS each time */
+@source not "../../.next";
+
 /*
- * Quarry slate and stone for the frame, white for the work surface, and one accent:
- * highlighter yellow, kept for anything a person needs to check.
+ * Light grey for the page, white for the work surface, lilac for the frame, navy for text,
+ * and one accent: violet, kept for anything a person needs to check.
+ * Taken from the project's blog artwork.
  */
 :root {
-  --stone: #f1f2f0;
+  --stone: #f5f5f8;
   --surface: #ffffff;
-  --line: #dadddb;
-  --ink: #1d252c;
-  --muted: #5d6872;
-  --quarry: #26313b;
-  --on-quarry: #f1f2f0;
-  --highlight: #f6e05e;
-  --highlight-soft: #fbf3c4;
-  --highlight-ink: #5c4a00;
-  --moss: #2f6b48;
-  --moss-soft: #e2efe6;
+  --line: #e2e3ea;
+  --ink: #1b2133;
+  --muted: #5f6478;
+  --quarry: #e3e2fd;
+  --on-quarry: #1b2133;
+  --highlight: #6f52fc;
+  --on-highlight: #ffffff;
+  --highlight-soft: #ece8fe;
+  --highlight-ink: #4329c4;
+  --moss: #1d7a50;
+  --moss-soft: #dcf3e6;
   --brick: #a63a37;
   --brick-soft: #f6e2e1;
   --slate: #3f5f80;
@@ -25,18 +30,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --stone: #161c21;
-    --surface: #1d252c;
-    --line: #2f3a44;
-    --ink: #e6eaec;
-    --muted: #9aa6b0;
-    --quarry: #0f1418;
-    --on-quarry: #e6eaec;
-    --highlight: #e8d24f;
-    --highlight-soft: #3d3713;
-    --highlight-ink: #f3e7a3;
-    --moss: #8cc7a3;
-    --moss-soft: #1d3326;
+    --stone: #0b1324;
+    --surface: #131d33;
+    --line: #26314b;
+    --ink: #eceaf4;
+    --muted: #9ca3bd;
+    --quarry: #070d1a;
+    --on-quarry: #eceaf4;
+    --highlight: #a48bff;
+    --on-highlight: #160b45;
+    --highlight-soft: #2a2356;
+    --highlight-ink: #d8cfff;
+    --moss: #81e0b0;
+    --moss-soft: #15332a;
     --brick: #ef9a97;
     --brick-soft: #3d2120;
     --slate: #a9c2dc;
@@ -53,6 +59,7 @@
   --color-quarry: var(--quarry);
   --color-on-quarry: var(--on-quarry);
   --color-highlight: var(--highlight);
+  --color-on-highlight: var(--on-highlight);
   --color-highlight-soft: var(--highlight-soft);
   --color-highlight-ink: var(--highlight-ink);
   --color-moss: var(--moss);
@@ -67,6 +74,21 @@
 body {
   background: var(--stone);
   color: var(--ink);
+}
+
+/* Tailwind 4 leaves buttons with the default cursor; anything clickable shows a pointer */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  select:not(:disabled),
+  summary,
+  label:has(> input[type="checkbox"]:not(:disabled)) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
 }
 
 /* A highlighter pass over the stage label while a document is being processed */

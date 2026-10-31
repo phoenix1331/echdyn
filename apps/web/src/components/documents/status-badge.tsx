@@ -4,7 +4,7 @@ import { STATUS_LABELS } from "@/lib/documents/format";
 const styles: Record<DocumentStatus, string> = {
   queued: "bg-slate-soft text-slate",
   extracting: "bg-slate-soft text-slate",
-  needs_review: "bg-highlight text-[#3d3200]",
+  needs_review: "bg-highlight text-on-highlight",
   approved: "bg-moss-soft text-moss",
   failed: "bg-brick-soft text-brick",
 };

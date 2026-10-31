@@ -22,6 +22,7 @@ describe("getServices", () => {
 
     expect(second).toBe(first);
     expect(first).toEqual({
+      config: { DATABASE_URL: "postgres://db", REDIS_URL: "redis://redis" },
       db: { name: "db" },
       storage: { name: "storage" },
       queue: { name: "queue" },

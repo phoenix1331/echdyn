@@ -40,7 +40,7 @@ export function LoginForm({ next }: { next: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="mt-1 rounded-md bg-quarry px-4 py-2.5 font-semibold text-on-quarry transition-colors hover:bg-quarry/90 focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-stone focus-visible:outline-none disabled:opacity-60 dark:bg-ink dark:text-stone"
+        className="mt-1 rounded-md bg-quarry px-4 py-2.5 font-semibold text-on-quarry transition-[filter] hover:brightness-95 active:brightness-90 focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-stone focus-visible:outline-none disabled:opacity-60 dark:bg-ink dark:text-stone"
       >
         {pending ? "Signing in..." : "Sign in"}
       </button>

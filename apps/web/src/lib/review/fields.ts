@@ -9,12 +9,18 @@ export interface FieldIssue {
   runs: number[];
 }
 
+export type InputType = "text" | "number" | "date";
+
 export interface ReviewField {
   key: string;
   label: string;
   description?: string;
   /** Formatted for reading; empty when the model found nothing */
   value: string;
+  /** The value in the schema's units, ready to edit (e.g. "4055", "2026-08-02") */
+  input: { value: string; type: InputType; unit?: string };
+  /** Set on approved documents when a reviewer changed the value */
+  corrected?: { from: string; by: string };
   /** What the model copied from the page, shown on flagged fields to compare with the PDF */
   printed?: string;
   issues: FieldIssue[];
@@ -34,6 +40,8 @@ export interface ReviewView {
   /** Problems with the run as a whole, such as output that was not JSON */
   general: string[];
   runCount: number;
+  /** Who approved it; values then come from the record, and flags are history */
+  approvedBy?: string;
 }
 
 type Property = { type?: unknown; format?: unknown; description?: unknown };
@@ -86,6 +94,24 @@ export function formatValue(value: unknown, display?: FieldDisplay, format?: unk
   return JSON.stringify(value);
 }
 
+function inputValue(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+  return typeof value === "string" ? value : JSON.stringify(value);
+}
+
+function inputType(prop: Property): InputType {
+  if (prop.type === "number" || prop.type === "integer") {
+    return "number";
+  }
+  return prop.format === "date" ? "date" : "text";
+}
+
+function inputUnit(display?: FieldDisplay): string | undefined {
+  return display?.currency ? "£" : display?.unit;
+}
+
 function properties(schema: Record<string, unknown>): Record<string, Property> {
   const value = schema.properties;
   return typeof value === "object" && value !== null ? (value as Record<string, Property>) : {};
@@ -113,8 +139,13 @@ export function buildReview(
   const issues = new Map<string, Map<string, FieldIssue>>();
   const checks = new Map<string, FailedCheck>();
   const general: string[] = [];
+  const record = review.record;
+  // Once approved, the flags explain what was checked, not what is left to do
+  const flags = record ? [] : review.document.flags;
+  const values = record?.data ?? primary?.parsed;
+  const corrections = new Map(review.corrections.map((c) => [c.field, c]));
 
-  for (const flag of review.document.flags) {
+  for (const flag of flags) {
     const run = RUN_PREFIX.exec(flag.message);
     const runs = run ? [Number(run[1])] : [];
     const text = flag.message.replace(RUN_PREFIX, "");
@@ -173,20 +204,41 @@ export function buildReview(
       ...issue,
       runs: [...new Set(issue.runs)].sort((a, b) => a - b),
     }));
-    const value = formatValue(primary?.parsed?.[key], display[key], prop.format);
+    const value = formatValue(values?.[key], display[key], prop.format);
     const printed = primary?.printed?.[key];
     const showPrinted =
       fieldIssues.length > 0 && typeof printed === "string" && printed !== "" && printed !== value;
+    const unit = inputUnit(display[key]);
+    const correction = record ? corrections.get(key) : undefined;
 
     return {
       key,
       label: labelOf(key),
       ...(typeof prop.description === "string" ? { description: prop.description } : {}),
       value,
+      input: {
+        value: inputValue(primary?.parsed?.[key]),
+        type: inputType(prop),
+        ...(unit ? { unit } : {}),
+      },
+      ...(correction
+        ? {
+            corrected: {
+              from: formatValue(correction.oldValue, display[key], prop.format) || "nothing",
+              by: correction.reviewer,
+            },
+          }
+        : {}),
       ...(showPrinted ? { printed } : {}),
       issues: fieldIssues,
     };
   });
 
-  return { fields, checks: [...checks.values()], general, runCount: review.runs.length };
+  return {
+    fields,
+    checks: [...checks.values()],
+    general,
+    runCount: review.runs.length,
+    ...(record ? { approvedBy: record.approvedBy } : {}),
+  };
 }

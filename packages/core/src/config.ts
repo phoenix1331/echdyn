@@ -14,6 +14,8 @@ const configSchema = z.object({
   OLLAMA_TEXT_MODEL: z.string().min(1),
   OLLAMA_VISION_MODEL: z.string().min(1),
   AUTO_APPROVE: z.stringbool().default(true),
+  /** Where reviewed documents are added as labelled examples; unset hides the option */
+  LABELLED_SET_DIR: z.string().min(1).optional(),
 });
 
 export type Config = z.infer<typeof configSchema>;

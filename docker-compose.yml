@@ -39,6 +39,8 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me-locally}
       API_TOKEN: ${API_TOKEN:-local-dev-api-token-change-me-0000}
       SESSION_SECRET: ${SESSION_SECRET:-local-dev-session-secret-change-me-00}
+      # Gitignored, so reviewed real bills never reach the repo
+      LABELLED_SET_DIR: /app/eval/sets/private
     ports:
       - "${APP_PORT:-8000}:8000"
     depends_on: &app-deps

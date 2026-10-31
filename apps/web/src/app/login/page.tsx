@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Suspense } from "react";
+import { Logo } from "@/components/logo";
 import { safeRedirectPath } from "@/lib/auth";
 import { LoginForm } from "./login-form";
 
@@ -16,14 +16,9 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <div className="flex flex-1 flex-col md:flex-row">
       <section className="flex flex-col justify-between gap-10 bg-quarry px-8 py-10 text-on-quarry md:w-[42%] md:px-14 md:py-14">
-        <Image
-          src="/echdyn-logo-white.webp"
-          alt="echdyn"
-          width={800}
-          height={190}
-          priority
-          className="h-10 w-auto self-start"
-        />
+        <div className="self-start">
+          <Logo className="h-10 w-auto" />
+        </div>
         <div className="max-w-sm">
           <h1 className="text-3xl leading-tight font-semibold md:text-4xl">
             Bills in. Checked figures out.

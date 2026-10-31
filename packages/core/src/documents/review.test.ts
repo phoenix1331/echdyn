@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { createDatabase } from "../db/client";
-import { documents, documentTypes, extractions } from "../db/schema";
+import { corrections, documents, documentTypes, extractions, records } from "../db/schema";
 import { getDocumentReview } from "./review";
 
 const testUrl = process.env.TEST_DATABASE_URL;
@@ -103,6 +103,51 @@ describe.skipIf(!testUrl)("getDocumentReview", () => {
     await run(1, "[1, 2]", new Date());
 
     expect((await getDocumentReview(db, documentId))?.runs[0]?.printed).toBeNull();
+  });
+
+  it("has no record or corrections before approval", async () => {
+    const review = await getDocumentReview(db, documentId);
+
+    expect(review?.record).toBeNull();
+    expect(review?.corrections).toEqual([]);
+  });
+
+  it("includes the approved record and each correction, oldest first", async () => {
+    await run(1, '{"total_gbp": "£12.50"}', new Date());
+    const [extraction] = await db.select().from(extractions);
+    const [type] = await db.select().from(documentTypes);
+    const base = { documentId, extractionId: extraction?.id ?? "", reviewer: "admin" };
+    await db.insert(corrections).values([
+      {
+        ...base,
+        field: "vat_gbp",
+        oldValue: 1,
+        newValue: 2,
+        createdAt: new Date(2026, 9, 31, 9, 1),
+      },
+      {
+        ...base,
+        field: "total_gbp",
+        oldValue: 12.5,
+        newValue: 13,
+        createdAt: new Date(2026, 9, 31, 9),
+      },
+    ]);
+    await db.insert(records).values({
+      documentId,
+      extractionId: extraction?.id ?? "",
+      documentTypeId: type?.id ?? "",
+      data: { total_gbp: 13 },
+      approvedBy: "admin",
+    });
+
+    const review = await getDocumentReview(db, documentId);
+
+    expect(review?.record).toMatchObject({ data: { total_gbp: 13 }, approvedBy: "admin" });
+    expect(review?.corrections.map((c) => [c.field, c.oldValue, c.newValue, c.reviewer])).toEqual([
+      ["total_gbp", 12.5, 13, "admin"],
+      ["vat_gbp", 1, 2, "admin"],
+    ]);
   });
 
   it("returns null for an unknown document", async () => {

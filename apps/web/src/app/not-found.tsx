@@ -12,7 +12,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/"
-          className="mt-6 rounded-md bg-quarry px-4 py-2.5 text-sm font-semibold text-on-quarry hover:bg-quarry/90 focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none dark:bg-ink dark:text-stone"
+          className="mt-6 rounded-md bg-quarry px-4 py-2.5 text-sm font-semibold text-on-quarry transition-[filter] hover:brightness-95 active:brightness-90 focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none dark:bg-ink dark:text-stone"
         >
           Go to documents
         </Link>

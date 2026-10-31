@@ -7,19 +7,56 @@ import { describeProgress, formatRelative } from "@/lib/documents/format";
 import { buildReview, type ReviewView } from "@/lib/review/fields";
 import { getServices } from "@/lib/services";
 import { FieldList } from "./field-list";
+import { ReviewForm } from "./review-form";
 
 const plural = (count: number, word: string) => `${String(count)} ${word}${count === 1 ? "" : "s"}`;
 
-function Summary({ view, status }: { view: ReviewView; status: string }) {
+function Approved({ view }: { view: ReviewView }) {
+  const corrected = view.fields.filter((field) => field.corrected).length;
+  const by = view.approvedBy === "auto" ? "automatically" : `by ${view.approvedBy ?? "a reviewer"}`;
+
+  return (
+    <div className="rounded-lg bg-moss-soft px-4 py-3 text-sm text-moss">
+      <p className="font-semibold">Approved {by}</p>
+      <p className="mt-0.5">
+        {view.approvedBy === "auto"
+          ? "Every check passed and both runs read the same values."
+          : corrected > 0
+            ? `${plural(corrected, "field")} corrected before approval.`
+            : "Every value was confirmed against the bill."}
+      </p>
+    </div>
+  );
+}
+
+function LabelledNotice({ labelled }: { labelled: string | undefined }) {
+  if (labelled === undefined) {
+    return null;
+  }
+  if (labelled === "failed") {
+    return (
+      <p role="status" className="rounded-lg bg-brick-soft px-4 py-3 text-sm text-brick">
+        Approved, but the document could not be added to the labelled set. The server log has the
+        reason.
+      </p>
+    );
+  }
+  return (
+    <p role="status" className="rounded-lg bg-slate-soft px-4 py-3 text-sm text-slate">
+      Added to the labelled set as <code>{labelled}</code>.
+    </p>
+  );
+}
+
+function Summary({ view }: { view: ReviewView }) {
   const toCheck = view.fields.filter((f) => f.issues.length > 0).length;
 
+  if (view.approvedBy !== undefined) {
+    return <Approved view={view} />;
+  }
+
   if (toCheck === 0 && view.general.length === 0) {
-    return status === "approved" ? (
-      <div className="rounded-lg bg-moss-soft px-4 py-3 text-sm text-moss">
-        <p className="font-semibold">Approved</p>
-        <p className="mt-0.5">Every check passed and both runs read the same values.</p>
-      </div>
-    ) : (
+    return (
       <div className="rounded-lg border border-line bg-surface px-4 py-3 text-sm text-ink">
         <p className="font-semibold">Nothing flagged</p>
         <p className="mt-0.5 text-muted">
@@ -51,9 +88,16 @@ function Summary({ view, status }: { view: ReviewView; status: string }) {
   );
 }
 
-export async function ReviewScreen({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const { db, storage } = getServices();
+export async function ReviewScreen({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const [{ id }, query] = await Promise.all([params, searchParams]);
+  const labelled = typeof query.labelled === "string" ? query.labelled : undefined;
+  const { db, storage, config } = getServices();
   const review = await getDocumentReview(db, id);
 
   if (!review) {
@@ -85,7 +129,7 @@ export async function ReviewScreen({ params }: { params: Promise<{ id: string }>
       <AutoRefresh active={active} />
       <Link
         href="/"
-        className="text-sm font-medium text-muted hover:text-ink focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
+        className="text-sm font-medium text-muted underline-offset-4 hover:text-ink hover:underline focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
       >
         Back to documents
       </Link>
@@ -110,7 +154,7 @@ export async function ReviewScreen({ params }: { params: Promise<{ id: string }>
             href={pdfUrl}
             target="_blank"
             rel="noreferrer"
-            className="rounded-md border border-line bg-surface px-4 py-2.5 text-center text-sm font-medium text-ink lg:hidden"
+            className="rounded-md border border-line bg-surface px-4 py-2.5 text-center text-sm font-medium text-ink transition-colors hover:border-muted hover:bg-stone lg:hidden"
           >
             Open the PDF
           </a>
@@ -156,8 +200,18 @@ export async function ReviewScreen({ params }: { params: Promise<{ id: string }>
 
           {runs.length > 0 && (
             <>
-              <Summary view={view} status={document.status} />
-              <FieldList fields={view.fields} runCount={view.runCount} />
+              <LabelledNotice labelled={labelled} />
+              <Summary view={view} />
+              {document.status === "needs_review" ? (
+                <ReviewForm
+                  documentId={document.id}
+                  fields={view.fields}
+                  runCount={view.runCount}
+                  canLabel={config.LABELLED_SET_DIR !== undefined}
+                />
+              ) : (
+                <FieldList fields={view.fields} runCount={view.runCount} />
+              )}
               <p className="text-xs text-muted">
                 {runs
                   .map(

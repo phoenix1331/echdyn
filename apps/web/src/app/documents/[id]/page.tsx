@@ -5,13 +5,13 @@ import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = { title: "Review - echdyn" };
 
-export default function ReviewPage({ params }: PageProps<"/documents/[id]">) {
+export default function ReviewPage({ params, searchParams }: PageProps<"/documents/[id]">) {
   return (
     <>
       <SiteHeader />
       <main className="flex-1">
         <Suspense fallback={<ReviewSkeleton />}>
-          <ReviewScreen params={params} />
+          <ReviewScreen params={params} searchParams={searchParams} />
         </Suspense>
       </main>
     </>

@@ -1,4 +1,4 @@
-import { access, readdir, readFile } from "node:fs/promises";
+import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { z } from "zod";
 import { getDocumentType } from "../document-types/registry";
@@ -95,4 +95,35 @@ export async function loadLabelledSet(dir: string): Promise<LabelledDocument[]> 
   }
 
   return documents;
+}
+
+export interface ReviewedLabel {
+  documentType: string;
+  /** SHA-256 of the PDF: names the files, so labelling the same document again overwrites it */
+  sha256: string;
+  filename: string;
+  pdf: Uint8Array;
+  expected: Record<string, unknown>;
+  reviewer: string;
+  reviewedAt?: Date;
+}
+
+/**
+ * Adds a human-approved document to a labelled set: the PDF plus a label whose expected
+ * values are the approved record. Returns the label's id (its file name without `.json`).
+ */
+export async function appendToLabelledSet(dir: string, input: ReviewedLabel): Promise<string> {
+  const id = `reviewed-${input.sha256.slice(0, 12)}`;
+  const reviewedAt = (input.reviewedAt ?? new Date()).toISOString().slice(0, 10);
+  const label: Label = {
+    document_type: input.documentType,
+    source: "real",
+    notes: `${input.filename}, reviewed by ${input.reviewer} on ${reviewedAt}`,
+    expected: input.expected,
+  };
+
+  await mkdir(dir, { recursive: true });
+  await writeFile(join(dir, `${id}.pdf`), input.pdf);
+  await writeFile(join(dir, `${id}.json`), `${JSON.stringify(label, null, 2)}\n`);
+  return id;
 }

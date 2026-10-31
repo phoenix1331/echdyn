@@ -51,7 +51,7 @@ export function FilterBar({ status, type, q, types }: FilterBarProps) {
       )}
       <button
         type="submit"
-        className="rounded-md border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-muted focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
+        className="rounded-md border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-muted hover:bg-stone focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
       >
         Search
       </button>

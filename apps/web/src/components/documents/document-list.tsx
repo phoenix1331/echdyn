@@ -73,7 +73,7 @@ function EmptyState({ filtered }: { filtered: boolean }) {
         <p className="font-medium text-ink">No documents match these filters.</p>
         <Link
           href="/"
-          className="mt-2 inline-block text-sm font-medium text-slate underline underline-offset-4"
+          className="mt-2 inline-block text-sm font-medium text-slate underline underline-offset-4 hover:text-ink hover:decoration-2"
         >
           Clear filters
         </Link>
@@ -150,12 +150,16 @@ export async function DocumentList({ searchParams }: { searchParams: Promise<Sea
               {page.items.map((doc) => {
                 const progress = describeProgress(doc, estimateMs);
                 return (
-                  <tr key={doc.id} className="align-top">
+                  <tr
+                    key={doc.id}
+                    className="group relative align-top transition-colors hover:bg-stone"
+                  >
                     <td className="max-w-0 px-4 py-4 md:w-1/2 md:px-5">
+                      {/* The link's ::after covers the row, so anywhere on it opens the document */}
                       <Link
                         href={`/documents/${doc.id}`}
                         title={doc.filename}
-                        className="block truncate font-medium text-ink underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
+                        className="block truncate font-medium text-ink underline-offset-4 group-hover:underline after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-highlight focus-visible:after:ring-inset"
                       >
                         {doc.filename}
                       </Link>
@@ -205,7 +209,7 @@ export async function DocumentList({ searchParams }: { searchParams: Promise<Sea
             {page.page > 1 && (
               <Link
                 href={listHref(params, { page: page.page - 1 })}
-                className="rounded-md border border-line bg-surface px-3 py-1.5 font-medium text-ink hover:border-muted"
+                className="rounded-md border border-line bg-surface px-3 py-1.5 font-medium text-ink transition-colors hover:border-muted hover:bg-stone focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
               >
                 Previous
               </Link>
@@ -213,7 +217,7 @@ export async function DocumentList({ searchParams }: { searchParams: Promise<Sea
             {page.page < page.pageCount && (
               <Link
                 href={listHref(params, { page: page.page + 1 })}
-                className="rounded-md border border-line bg-surface px-3 py-1.5 font-medium text-ink hover:border-muted"
+                className="rounded-md border border-line bg-surface px-3 py-1.5 font-medium text-ink transition-colors hover:border-muted hover:bg-stone focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
               >
                 Next
               </Link>

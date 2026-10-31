@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { logout } from "@/app/login/actions";
+import { Logo } from "@/components/logo";
 
 export function SiteHeader() {
   return (
@@ -8,17 +8,9 @@ export function SiteHeader() {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 md:px-8">
         <Link
           href="/"
-          className="rounded focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
+          className="rounded transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
         >
-          {/* The header is slate in both colour schemes, so it always takes the white logo */}
-          <Image
-            src="/echdyn-logo-white.webp"
-            alt="echdyn"
-            width={800}
-            height={190}
-            priority
-            className="h-7 w-auto"
-          />
+          <Logo className="h-7 w-auto" />
         </Link>
         <form action={logout}>
           <button

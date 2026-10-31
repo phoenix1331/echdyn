@@ -34,11 +34,16 @@ const run = (
   durationMs: 1000,
 });
 
-const review = (flags: FieldError[], runs: ReviewRun[]): DocumentReview =>
+const review = (
+  flags: FieldError[],
+  runs: ReviewRun[],
+  approval: Pick<DocumentReview, "record" | "corrections"> = { record: null, corrections: [] },
+): DocumentReview =>
   ({
     document: { flags },
     schema,
     runs,
+    ...approval,
   }) as unknown as DocumentReview;
 
 const values = {
@@ -167,5 +172,77 @@ describe("buildReview", () => {
   it("copes with no runs yet and a schema without properties", () => {
     expect(buildReview(review([], []), display).fields.every((f) => f.value === "")).toBe(true);
     expect(buildReview({ ...review([], []), schema: {} }).fields).toEqual([]);
+  });
+
+  it("gives each field its raw value and input type for correcting", () => {
+    const view = buildReview(review([], [run(1, { ...values, supplier: null })]), display);
+    const input = Object.fromEntries(view.fields.map((f) => [f.key, f.input]));
+
+    expect(input).toEqual({
+      supplier: { value: "", type: "text" },
+      billing_period_end: { value: "2026-03-13", type: "date" },
+      unit_rate_pence: { value: "18.3", type: "number", unit: "p/kWh" },
+      subtotal_gbp: { value: "721.39", type: "number", unit: "£" },
+      total_gbp: { value: "784.34", type: "number", unit: "£" },
+    });
+  });
+
+  it("shows an approved document's record, who corrected what, and no open flags", () => {
+    const flags = [{ field: "total_gbp", rule: "total-adds-up", message: "Run 1: Total is off" }];
+    const view = buildReview(
+      review(flags, [run(1, values)], {
+        record: {
+          id: "r1",
+          data: { ...values, total_gbp: 805.74 },
+          approvedBy: "admin",
+          approvedAt: new Date(),
+        },
+        corrections: [
+          {
+            field: "total_gbp",
+            oldValue: 784.34,
+            newValue: 805.74,
+            reviewer: "admin",
+            createdAt: new Date(),
+          },
+          {
+            field: "supplier",
+            oldValue: null,
+            newValue: "x",
+            reviewer: "admin",
+            createdAt: new Date(),
+          },
+        ],
+      }),
+      display,
+    );
+    const total = view.fields.find((f) => f.key === "total_gbp");
+
+    expect(view.approvedBy).toBe("admin");
+    expect(total).toMatchObject({ value: "£805.74", corrected: { from: "£784.34", by: "admin" } });
+    expect(view.fields.find((f) => f.key === "supplier")?.corrected?.from).toBe("nothing");
+    expect(view.fields.every((f) => f.issues.length === 0)).toBe(true);
+    expect(view.checks).toEqual([]);
+  });
+
+  it("leaves approvedBy unset and ignores corrections until there is a record", () => {
+    const view = buildReview(
+      review([], [run(1, values)], {
+        record: null,
+        corrections: [
+          {
+            field: "total_gbp",
+            oldValue: 1,
+            newValue: 2,
+            reviewer: "admin",
+            createdAt: new Date(),
+          },
+        ],
+      }),
+      display,
+    );
+
+    expect(view.approvedBy).toBeUndefined();
+    expect(view.fields.some((f) => f.corrected)).toBe(false);
   });
 });

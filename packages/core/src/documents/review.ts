@@ -1,7 +1,14 @@
 import { asc, eq } from "drizzle-orm";
 import type { Database } from "../db/client";
 import { firstRow } from "../db/rows";
-import { documents, documentTypes, extractions, type FieldError } from "../db/schema";
+import {
+  corrections,
+  documents,
+  documentTypes,
+  extractions,
+  records,
+  type FieldError,
+} from "../db/schema";
 import { getDocumentSummary, type DocumentSummary } from "./queries";
 
 export interface ReviewRun {
@@ -16,6 +23,21 @@ export interface ReviewRun {
   durationMs: number;
 }
 
+export interface ReviewCorrection {
+  field: string;
+  oldValue: unknown;
+  newValue: unknown;
+  reviewer: string;
+  createdAt: Date;
+}
+
+export interface ReviewRecord {
+  id: string;
+  data: Record<string, unknown>;
+  approvedBy: string;
+  approvedAt: Date;
+}
+
 export interface DocumentReview {
   document: DocumentSummary & {
     storageKey: string;
@@ -25,6 +47,9 @@ export interface DocumentReview {
   /** The JSON Schema stored with the document type version, which fixes field order */
   schema: Record<string, unknown>;
   runs: ReviewRun[];
+  /** The approved values, once a reviewer or auto-approval has signed them off */
+  record: ReviewRecord | null;
+  corrections: ReviewCorrection[];
 }
 
 function parseObject(raw: string): Record<string, unknown> | null {
@@ -48,7 +73,7 @@ export async function getDocumentReview(db: Database, id: string): Promise<Docum
     return null;
   }
 
-  const [extraRows, rows] = await Promise.all([
+  const [extraRows, rows, recordRows, correctionRows] = await Promise.all([
     db
       .select({
         storageKey: documents.storageKey,
@@ -64,6 +89,26 @@ export async function getDocumentReview(db: Database, id: string): Promise<Docum
       .from(extractions)
       .where(eq(extractions.documentId, id))
       .orderBy(asc(extractions.createdAt), asc(extractions.runNumber)),
+    db
+      .select({
+        id: records.id,
+        data: records.data,
+        approvedBy: records.approvedBy,
+        approvedAt: records.approvedAt,
+      })
+      .from(records)
+      .where(eq(records.documentId, id)),
+    db
+      .select({
+        field: corrections.field,
+        oldValue: corrections.oldValue,
+        newValue: corrections.newValue,
+        reviewer: corrections.reviewer,
+        createdAt: corrections.createdAt,
+      })
+      .from(corrections)
+      .where(eq(corrections.documentId, id))
+      .orderBy(asc(corrections.createdAt)),
   ]);
 
   // The summary query has just found this row
@@ -82,5 +127,11 @@ export async function getDocumentReview(db: Database, id: string): Promise<Docum
     }));
 
   const { schema, ...documentExtra } = extra;
-  return { document: { ...summary, ...documentExtra }, schema, runs };
+  return {
+    document: { ...summary, ...documentExtra },
+    schema,
+    runs,
+    record: recordRows[0] ?? null,
+    corrections: correctionRows,
+  };
 }

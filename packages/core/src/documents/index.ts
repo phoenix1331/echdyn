@@ -11,4 +11,19 @@ export {
   type DocumentPage,
   type DocumentSummary,
 } from "./queries";
-export { getDocumentReview, type DocumentReview, type ReviewRun } from "./review";
+export {
+  approveDocument,
+  coerceInput,
+  ReviewError,
+  type ApprovedDocument,
+  type ApproveInput,
+  type RejectedApproval,
+  type ReviewErrorCode,
+} from "./approve";
+export {
+  getDocumentReview,
+  type DocumentReview,
+  type ReviewCorrection,
+  type ReviewRecord,
+  type ReviewRun,
+} from "./review";
