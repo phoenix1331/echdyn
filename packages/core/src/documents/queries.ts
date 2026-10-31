@@ -35,6 +35,7 @@ export interface DocumentSummary {
   status: DocumentStatus;
   stage: string | null;
   error: string | null;
+  /** Distinct fields flagged for a person to check */
   flagCount: number;
   pageCount: number | null;
   createdAt: Date;
@@ -60,7 +61,11 @@ const summaryColumns = {
   status: documents.status,
   stage: documents.stage,
   error: documents.error,
-  flagCount: sql<number>`jsonb_array_length(${documents.flags})`.mapWith(Number),
+  // Distinct fields, not flags: one field can fail a rule and a run comparison at once
+  flagCount:
+    sql<number>`(select count(distinct f->>'field') from jsonb_array_elements(${documents.flags}) f)`.mapWith(
+      Number,
+    ),
   pageCount: documents.pageCount,
   createdAt: documents.createdAt,
   updatedAt: documents.updatedAt,

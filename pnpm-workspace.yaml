@@ -8,3 +8,4 @@ onlyBuiltDependencies:
 
 overrides:
   "@esbuild-kit/core-utils>esbuild": ^0.25.0
+  "minimatch@>=10 <11.0.1": ^11.0.3

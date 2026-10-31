@@ -1,0 +1,9 @@
+# minimatch 3.x is pulled in by eslint, eslint-plugin-react, -import and -jsx-a11y.
+# The fix only exists in 11.0.1, whose CommonJS build has no callable default
+# export, so overriding 3.x breaks those plugins at runtime.
+# Dev-only: the globs come from our own lint config, not from untrusted input.
+# The 10.x copy is overridden to 11 in pnpm-workspace.yaml.
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+ignoreUntil = 2027-01-31
+reason = "minimatch 3.x in eslint and its plugins has no compatible fix; dev-only, trusted globs"

@@ -12,5 +12,6 @@ export {
   getDocumentType,
   toJsonSchema,
   type DocumentTypeDefinition,
+  type FieldDisplay,
 } from "./registry";
 export { seedDocumentTypes, type SeedResult } from "./seed";

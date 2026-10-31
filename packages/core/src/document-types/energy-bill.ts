@@ -109,6 +109,20 @@ export const energyBill: DocumentTypeDefinition<typeof energyBillSchema> = {
   version: 1,
   schema: energyBillSchema,
   rules: energyBillRules,
+  display: {
+    supplier: { label: "Supplier" },
+    account_number: { label: "Account number" },
+    meter_point_number: { label: "Meter point (MPAN or MPRN)" },
+    billing_period_start: { label: "Period start" },
+    billing_period_end: { label: "Period end" },
+    consumption_kwh: { label: "Consumption", unit: "kWh" },
+    unit_rate_pence: { label: "Unit rate", unit: "p/kWh" },
+    standing_charge_pence_per_day: { label: "Standing charge", unit: "p/day" },
+    subtotal_gbp: { label: "Subtotal", currency: true },
+    vat_rate_percent: { label: "VAT rate", unit: "%" },
+    vat_gbp: { label: "VAT", currency: true },
+    total_gbp: { label: "Total", currency: true },
+  },
   extraction: {
     // Each hint answers a look-alike value the eval caught the model taking instead
     hints: [

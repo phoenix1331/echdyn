@@ -11,3 +11,4 @@ export {
   type DocumentPage,
   type DocumentSummary,
 } from "./queries";
+export { getDocumentReview, type DocumentReview, type ReviewRun } from "./review";

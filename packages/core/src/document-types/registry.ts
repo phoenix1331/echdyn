@@ -3,12 +3,23 @@ import type { PrintedUnit } from "../extraction/printed";
 import type { BusinessRule } from "../validation/rules";
 import { energyBill } from "./energy-bill";
 
+/** How a field reads on the review screen */
+export interface FieldDisplay {
+  label: string;
+  /** Written after the value, e.g. "kWh" or "p/kWh"; "%" is attached without a space */
+  unit?: string;
+  /** Pounds, shown as £1,234.56 */
+  currency?: boolean;
+}
+
 export interface DocumentTypeDefinition<TSchema extends z.ZodObject = z.ZodObject> {
   slug: string;
   name: string;
   version: number;
   schema: TSchema;
   rules: readonly BusinessRule<z.infer<TSchema>>[];
+  /** Review screen labels and units; fields without one get a label made from their name */
+  display?: Readonly<Partial<Record<keyof z.infer<TSchema> & string, FieldDisplay>>>;
   extraction?: {
     /** Appended to the system prompt: where to look and which look-alike values to ignore */
     hints?: readonly string[];

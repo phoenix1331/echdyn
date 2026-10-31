@@ -152,9 +152,13 @@ export async function DocumentList({ searchParams }: { searchParams: Promise<Sea
                 return (
                   <tr key={doc.id} className="align-top">
                     <td className="max-w-0 px-4 py-4 md:w-1/2 md:px-5">
-                      <p className="truncate font-medium text-ink" title={doc.filename}>
+                      <Link
+                        href={`/documents/${doc.id}`}
+                        title={doc.filename}
+                        className="block truncate font-medium text-ink underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-highlight focus-visible:outline-none"
+                      >
                         {doc.filename}
-                      </p>
+                      </Link>
                       <p className="mt-0.5 truncate text-muted">
                         {doc.documentType.name}
                         {doc.pageCount !== null &&

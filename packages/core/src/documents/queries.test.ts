@@ -83,6 +83,7 @@ describe.skipIf(!testUrl)("document queries", () => {
         flags: [
           { field: "vat_gbp", message: "a" },
           { field: "total_gbp", message: "b" },
+          { field: "total_gbp", message: "c", rule: "run-mismatch" },
         ],
       });
       await insertDocument("running.pdf", "extracting", { stage: "Reading PDF" });
