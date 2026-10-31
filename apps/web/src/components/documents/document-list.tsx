@@ -84,10 +84,19 @@ function EmptyState({ filtered }: { filtered: boolean }) {
     <div className="mx-auto max-w-md px-6 py-16 text-center">
       <p className="text-lg font-semibold text-ink">No documents yet</p>
       <p className="mt-2 text-sm leading-relaxed text-muted">
-        Upload a PDF to{" "}
+        Upload a bill, or try one of the examples. It appears here as soon as it is queued, and this
+        page updates as it is processed.
+      </p>
+      <Link
+        href="/upload"
+        className="mt-4 inline-block rounded-md bg-highlight px-4 py-2.5 text-sm font-semibold text-on-highlight transition-[filter] hover:brightness-110 focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:outline-none"
+      >
+        Upload documents
+      </Link>
+      <p className="mt-4 text-xs text-muted">
+        Integrations can use{" "}
         <code className="rounded bg-stone px-1.5 py-0.5 text-ink">POST /api/documents</code> with
-        your API token. It appears here as soon as it is queued, and this page updates as it is
-        processed.
+        the API token.
       </p>
     </div>
   );

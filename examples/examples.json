@@ -1,0 +1,44 @@
+[
+  {
+    "file": "northern-power-gas.pdf",
+    "title": "Gas bill, Northern Power",
+    "description": "A typed gas bill with meter readings and an m³ to kWh conversion: the model must take the kWh charged, not the volume.",
+    "total_gbp": 494.89
+  },
+  {
+    "file": "severn-valley-pounds-per-kwh.pdf",
+    "title": "Rates in pounds, Severn Valley",
+    "description": "Quotes the unit rate as £0.1830/kWh, which must be stored as 18.3p, with a previous balance and payment to ignore.",
+    "total_gbp": 784.34
+  },
+  {
+    "file": "cymru-gas-and-power.pdf",
+    "title": "Electricity bill, Cymru Gas & Power",
+    "description": "The third supplier layout: different labels and date format, same fields to find.",
+    "total_gbp": 1425.06
+  },
+  {
+    "file": "northern-power-two-pages.pdf",
+    "title": "Two pages with usage history",
+    "description": "The second page is a 12-month usage table full of kWh figures that are not this bill's consumption.",
+    "total_gbp": 1603.3
+  },
+  {
+    "file": "scanned-severn-valley.pdf",
+    "title": "Scanned bill",
+    "description": "An image-only scan with no text layer, read by the vision model. Slow without a GPU: expect minutes.",
+    "total_gbp": 784.34
+  },
+  {
+    "file": "mixed-cover-letter.pdf",
+    "title": "Typed letter, scanned bill",
+    "description": "A typed cover letter in front of a scanned bill: each page is read the right way, in one request.",
+    "total_gbp": 494.89
+  },
+  {
+    "file": "vat-trap.pdf",
+    "title": "The VAT trap",
+    "description": "A short bill where small models often copy the total into the VAT field. The VAT checks catch it and send it to review.",
+    "total_gbp": 386.88
+  }
+]

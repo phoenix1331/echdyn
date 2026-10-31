@@ -1,6 +1,5 @@
-import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { expect, test, type APIRequestContext, type Locator } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Locator, type Page } from "@playwright/test";
 
 const apiToken = process.env.API_TOKEN ?? "";
 const username = process.env.ADMIN_USERNAME ?? "admin";
@@ -24,37 +23,50 @@ async function startEditing(row: Locator): Promise<Locator> {
   return input;
 }
 
-test("a reviewer fixes a misread figure and approves the bill into a record", async ({
-  page,
-  request,
-}) => {
-  // Upload through the API, as an integration would
-  const upload = await request.post("/api/documents", {
-    headers: auth,
-    multipart: {
-      document_type: "uk-energy-bill",
-      file: {
-        name: "sample-energy-bill.pdf",
-        mimeType: "application/pdf",
-        buffer: await readFile(resolve(import.meta.dirname, "../fixtures/sample-energy-bill.pdf")),
-      },
-    },
-  });
-  expect(upload.status()).toBe(201);
-  const { id } = (await upload.json()) as { id: string };
-
-  // The stub model copies the total into VAT, so both VAT checks send it to review
-  await expect.poll(() => status(request, id), { timeout: 90_000 }).toBe("needs_review");
-
+async function signIn(page: Page): Promise<void> {
   await page.goto("/");
   await expect(page).toHaveURL(/\/login/);
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page.getByRole("heading", { name: "Documents" })).toBeVisible();
+}
 
-  // Anywhere on the row opens the document, not just its name
+// As with Edit, a file chosen before hydration goes unnoticed; retry until the summary opens
+async function chooseFile(page: Page, path: string): Promise<Locator> {
+  const summary = page.getByRole("dialog", { name: "Before you upload" });
+  await expect(async () => {
+    await page.locator('input[type="file"]').setInputFiles(path);
+    await expect(summary).toBeVisible({ timeout: 2_000 });
+  }).toPass({ timeout: 30_000 });
+  return summary;
+}
+
+test("a file picked on the upload page is summarised, uploaded, reviewed and approved", async ({
+  page,
+  request,
+}) => {
+  await signIn(page);
+  await page.getByRole("link", { name: "Upload", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Upload documents" })).toBeVisible();
+
+  // Nothing is stored until Proceed: the summary says what the file holds and how it is read
+  const summary = await chooseFile(
+    page,
+    resolve(import.meta.dirname, "../fixtures/sample-energy-bill.pdf"),
+  );
+  await expect(summary).toContainText("1 typed page");
+  await expect(summary).toContainText("Read from its text");
+  await summary.getByRole("button", { name: "Upload 1 file" }).click();
+
+  // Back on the list, the new document is there and the page follows its progress
   const row = page.getByRole("row", { name: /sample-energy-bill\.pdf/ });
-  await expect(row).toContainText("Needs review");
+  await expect(row).toBeVisible();
+  const id = ((await row.getByRole("link").getAttribute("href")) ?? "").split("/").pop() ?? "";
+
+  // The stub model copies the total into VAT, so both VAT checks send it to review
+  await expect.poll(() => status(request, id), { timeout: 90_000 }).toBe("needs_review");
+  await expect(row).toContainText("Needs review", { timeout: 15_000 });
   // The row's centre is the status column, well away from the file name
   await row.click();
   await expect(page).toHaveURL(new RegExp(`/documents/${id}$`));
@@ -106,4 +118,29 @@ test("a reviewer fixes a misread figure and approves the bill into a record", as
   await expect(page.getByRole("row", { name: /sample-energy-bill\.pdf/ })).toContainText(
     "Approved",
   );
+});
+
+test("an example shows a mixed bill in the summary, and Cancel stores nothing", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.goto("/upload");
+
+  const card = page.getByRole("listitem").filter({ hasText: "Typed letter, scanned bill" });
+  const summary = page.getByRole("dialog", { name: "Before you upload" });
+  await expect(async () => {
+    await card.getByRole("button", { name: "Use this example" }).click();
+    await expect(summary).toBeVisible({ timeout: 2_000 });
+  }).toPass({ timeout: 30_000 });
+
+  await expect(summary).toContainText("2 pages: 1 typed, 1 scanned");
+  await expect(summary).toContainText("Text and scan read together");
+  await expect(summary).toContainText("slow without a GPU");
+
+  await summary.getByRole("button", { name: "Cancel" }).click();
+  await expect(summary).toBeHidden();
+
+  // Inspecting stored nothing: the example never reaches the list
+  await page.goto("/");
+  await expect(page.getByRole("row", { name: /mixed-cover-letter\.pdf/ })).toHaveCount(0);
 });

@@ -4,8 +4,9 @@ const nextConfig: NextConfig = {
   // Dev assets and the hot reload socket only answer listed hosts; the e2e browser uses "web"
   allowedDevOrigins: process.env.NEXT_ALLOWED_DEV_ORIGINS?.split(",") ?? [],
   transpilePackages: ["@echdyn/core"],
-  // A native addon pulled in through @echdyn/core's page renderer; Node loads it, Turbopack cannot bundle it
-  serverExternalPackages: ["@napi-rs/canvas"],
+  // Loaded by Node, not bundled: @napi-rs/canvas is a native addon, and pdfjs-dist loads its
+  // worker (pdf.worker.mjs) from beside itself at runtime, which a bundled chunk cannot find
+  serverExternalPackages: ["@napi-rs/canvas", "pdfjs-dist"],
   cacheComponents: true,
   partialPrefetching: true,
   experimental: {

@@ -20,6 +20,26 @@ GET {{baseUrl}}/
 
 ### Documents
 
+# Dry run before uploading: same fields as an upload, nothing stored or queued. Returns page
+# kinds (text, scan, blank), which model reads it, an estimate from recent runs, any duplicate
+# and the queue. This mixed fixture is a typed cover letter in front of a scanned bill
+POST {{baseUrl}}/api/documents/inspect
+Authorization: Bearer {{apiToken}}
+Content-Type: multipart/form-data; boundary=echdyn
+
+--echdyn
+Content-Disposition: form-data; name="document_type"
+
+uk-energy-bill
+--echdyn
+Content-Disposition: form-data; name="file"; filename="mixed-energy-bill.pdf"
+Content-Type: application/pdf
+
+< ./fixtures/mixed-energy-bill.pdf
+--echdyn--
+
+###
+
 # Upload a PDF for extraction: returns 201 with the new document id and status "queued"
 POST {{baseUrl}}/api/documents
 Authorization: Bearer {{apiToken}}
