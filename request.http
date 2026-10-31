@@ -162,6 +162,22 @@ Authorization: Bearer {{apiToken}}
 GET {{baseUrl}}/api/records/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{apiToken}}
 
+### Export
+
+# Approved records as CSV (the default format): field keys as headers, one row per record.
+# Needs a type, as the columns come from its schema; takes the same filters as GET /api/records
+GET {{baseUrl}}/api/records/export?type=uk-energy-bill
+Authorization: Bearer {{apiToken}}
+
+###
+
+# The same as an Excel workbook: readable headers, real numbers and dates, £ formatting.
+# An X-Echdyn-Truncated: true header means more records matched than one export holds (50,000)
+GET {{baseUrl}}/api/records/export?type=uk-energy-bill&format=xlsx&filter=unit_rate_pence:gt:30
+Authorization: Bearer {{apiToken}}
+
+###
+
 ### Webhooks
 
 # Add an endpoint: approvals are POSTed to it as "record.approved" events. The response carries
