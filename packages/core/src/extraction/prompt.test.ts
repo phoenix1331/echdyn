@@ -37,17 +37,27 @@ describe("buildTextPrompt", () => {
 describe("buildVisionPrompt", () => {
   const png = new Uint8Array([1, 2, 3]);
 
-  it("shares the text prompt's instructions and hints, and attaches each page as an image", () => {
+  it("keeps the text prompt's instructions and hints, and attaches each page as an image", () => {
     const [system, user] = buildVisionPrompt(
       "UK business energy bill",
       [png],
       ["Ignore payments."],
     );
-    const [textSystem] = buildTextPrompt("UK business energy bill", ["x"], ["Ignore payments."]);
 
-    expect(system).toEqual(textSystem);
+    expect(system?.content).toContain("Copy values exactly as printed");
+    expect(system?.content).toContain("Ignore payments.");
     expect(user?.content).toContain("the 1 page of a scanned UK business energy bill");
     expect(user?.images).toEqual(["AQID"]);
+  });
+
+  it("asks for dates and pound signs as printed instead of converted", () => {
+    const [system] = buildVisionPrompt("bill", [png]);
+    const [textSystem] = buildTextPrompt("bill", ["x"]);
+
+    expect(system?.content).toContain("Copy dates exactly as printed");
+    expect(system?.content).toContain("Keep the £ or p");
+    expect(system?.content).not.toContain("YYYY-MM-DD");
+    expect(textSystem?.content).toContain("Write dates as YYYY-MM-DD.");
   });
 
   it("counts pages and keeps their order", () => {

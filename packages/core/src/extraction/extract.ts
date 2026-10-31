@@ -77,7 +77,7 @@ export async function extractFields(
   const response = await client.chat({
     model,
     messages,
-    format: toPrintedSchema(input.jsonSchema),
+    format: toPrintedSchema(input.jsonSchema, { dates: source.kind === "images" }),
     stream: false,
     options: { temperature },
   });

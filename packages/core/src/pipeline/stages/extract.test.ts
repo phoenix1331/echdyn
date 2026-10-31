@@ -96,7 +96,7 @@ describe.skipIf(!testUrl || !testBucket)("extract stage", () => {
     const [row] = await db.select().from(extractions).where(eq(extractions.documentId, id));
     expect(row).toMatchObject({
       model: "qwen2.5vl:3b",
-      promptVersion: "vision-v1",
+      promptVersion: "vision-v2",
       parsed: { total_gbp: 386.88 },
     });
   });

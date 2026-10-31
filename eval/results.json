@@ -6,7 +6,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 49614,
+    "durationMs": 66828,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -77,7 +77,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 33294,
+    "durationMs": 33793,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -148,7 +148,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 29232,
+    "durationMs": 31211,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -219,7 +219,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 30528,
+    "durationMs": 30415,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -290,7 +290,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 31375,
+    "durationMs": 30622,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -324,8 +324,8 @@
       },
       "unit_rate_pence": {
         "expected": 18.28,
-        "actual": 0.1828,
-        "correct": false
+        "actual": 18.28,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 117.16,
@@ -361,7 +361,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 28331,
+    "durationMs": 28938,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -432,7 +432,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 33924,
+    "durationMs": 34135,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -503,7 +503,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 30761,
+    "durationMs": 32870,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -537,13 +537,13 @@
       },
       "unit_rate_pence": {
         "expected": 30.34,
-        "actual": 0.3034,
-        "correct": false
+        "actual": 30.34,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 44.89,
-        "actual": 0.4489,
-        "correct": false
+        "actual": 44.89,
+        "correct": true
       },
       "subtotal_gbp": {
         "expected": 1707.96,
@@ -574,7 +574,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 29108,
+    "durationMs": 30725,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -645,7 +645,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 33722,
+    "durationMs": 33981,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -716,7 +716,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 30459,
+    "durationMs": 28878,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -750,8 +750,8 @@
       },
       "unit_rate_pence": {
         "expected": 18.84,
-        "actual": 0.1884,
-        "correct": false
+        "actual": 18.84,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 113.24,
@@ -787,7 +787,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 27463,
+    "durationMs": 27361,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -858,7 +858,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 27786,
+    "durationMs": 29114,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -929,7 +929,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 31694,
+    "durationMs": 33472,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -1000,7 +1000,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 32596,
+    "durationMs": 35268,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -1071,7 +1071,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 28163,
+    "durationMs": 32895,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -1142,7 +1142,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 32442,
+    "durationMs": 36725,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -1213,7 +1213,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 28511,
+    "durationMs": 32181,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -1284,7 +1284,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 27778,
+    "durationMs": 29554,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -1355,7 +1355,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 38149,
+    "durationMs": 30743,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -1389,8 +1389,8 @@
       },
       "unit_rate_pence": {
         "expected": 30.54,
-        "actual": 0.3054,
-        "correct": false
+        "actual": 30.54,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 118.65,
@@ -1426,7 +1426,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 31610,
+    "durationMs": 30268,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -1496,8 +1496,8 @@
     "layout": "Northern Power Ltd",
     "set": "synthetic",
     "readBy": "llama3.2",
-    "outcome": "needs_review",
-    "durationMs": 32975,
+    "outcome": "approved",
+    "durationMs": 35305,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -1567,8 +1567,8 @@
     "layout": "Severn Valley Energy",
     "set": "synthetic",
     "readBy": "llama3.2",
-    "outcome": "needs_review",
-    "durationMs": 35451,
+    "outcome": "approved",
+    "durationMs": 37692,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -1602,13 +1602,13 @@
       },
       "unit_rate_pence": {
         "expected": 11.05,
-        "actual": 0.1105,
-        "correct": false
+        "actual": 11.05,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 85.97,
-        "actual": 0.8597,
-        "correct": false
+        "actual": 85.97,
+        "correct": true
       },
       "subtotal_gbp": {
         "expected": 652.19,
@@ -1639,7 +1639,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 28465,
+    "durationMs": 30112,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -1710,7 +1710,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 29959,
+    "durationMs": 31495,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -1781,7 +1781,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 31094,
+    "durationMs": 33287,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -1815,13 +1815,13 @@
       },
       "unit_rate_pence": {
         "expected": 9.69,
-        "actual": 0.0969,
-        "correct": false
+        "actual": 9.69,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 60.61,
-        "actual": 0.6061,
-        "correct": false
+        "actual": 60.61,
+        "correct": true
       },
       "subtotal_gbp": {
         "expected": 372.43,
@@ -1852,7 +1852,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 29500,
+    "durationMs": 30311,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -1923,7 +1923,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 34746,
+    "durationMs": 35638,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -1994,7 +1994,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "needs_review",
-    "durationMs": 35023,
+    "durationMs": 50683,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -2028,13 +2028,13 @@
       },
       "unit_rate_pence": {
         "expected": 32.27,
-        "actual": 0.3227,
-        "correct": false
+        "actual": 32.27,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 91.36,
-        "actual": 0.9136,
-        "correct": false
+        "actual": 91.36,
+        "correct": true
       },
       "subtotal_gbp": {
         "expected": 1069.41,
@@ -2065,7 +2065,7 @@
     "set": "synthetic",
     "readBy": "llama3.2",
     "outcome": "approved",
-    "durationMs": 30001,
+    "durationMs": 36897,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -2136,7 +2136,7 @@
     "set": "scanned",
     "readBy": "qwen2.5vl:3b",
     "outcome": "needs_review",
-    "durationMs": 290560,
+    "durationMs": 365476,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -2207,7 +2207,7 @@
     "set": "scanned",
     "readBy": "qwen2.5vl:3b",
     "outcome": "needs_review",
-    "durationMs": 258472,
+    "durationMs": 348847,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -2226,13 +2226,13 @@
       },
       "billing_period_start": {
         "expected": "2026-02-10",
-        "actual": "1002-02-26",
-        "correct": false
+        "actual": "2026-02-10",
+        "correct": true
       },
       "billing_period_end": {
         "expected": "2026-03-13",
-        "actual": "1330-03-20",
-        "correct": false
+        "actual": "2026-03-13",
+        "correct": true
       },
       "consumption_kwh": {
         "expected": 3942,
@@ -2241,18 +2241,18 @@
       },
       "unit_rate_pence": {
         "expected": 18.3,
-        "actual": 0.183,
-        "correct": false
+        "actual": 18.3,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 80.01,
-        "actual": 0.8001,
-        "correct": false
+        "actual": 80.01,
+        "correct": true
       },
       "subtotal_gbp": {
         "expected": 746.99,
-        "actual": 721.39,
-        "correct": false
+        "actual": 746.99,
+        "correct": true
       },
       "vat_rate_percent": {
         "expected": 5,
@@ -2261,8 +2261,8 @@
       },
       "vat_gbp": {
         "expected": 37.35,
-        "actual": 746.99,
-        "correct": false
+        "actual": 37.35,
+        "correct": true
       },
       "total_gbp": {
         "expected": 784.34,
@@ -2277,8 +2277,8 @@
     "layout": "Cymru Gas & Power (scanned)",
     "set": "scanned",
     "readBy": "qwen2.5vl:3b",
-    "outcome": "needs_review",
-    "durationMs": 297732,
+    "outcome": "approved",
+    "durationMs": 334809,
     "fields": {
       "supplier": {
         "expected": "Cymru Gas & Power",
@@ -2302,8 +2302,8 @@
       },
       "billing_period_end": {
         "expected": "2026-01-21",
-        "actual": "2025-01-21",
-        "correct": false
+        "actual": "2026-01-21",
+        "correct": true
       },
       "consumption_kwh": {
         "expected": 5435,
@@ -2349,7 +2349,7 @@
     "set": "scanned",
     "readBy": "qwen2.5vl:3b",
     "outcome": "needs_review",
-    "durationMs": 325310,
+    "durationMs": 301653,
     "fields": {
       "supplier": {
         "expected": "Northern Power Ltd",
@@ -2368,13 +2368,13 @@
       },
       "billing_period_start": {
         "expected": "2026-12-03",
-        "actual": "0312-02-20",
-        "correct": false
+        "actual": "2026-12-03",
+        "correct": true
       },
       "billing_period_end": {
         "expected": "2027-01-04",
-        "actual": "0401-02-20",
-        "correct": false
+        "actual": "2027-01-04",
+        "correct": true
       },
       "consumption_kwh": {
         "expected": 4298,
@@ -2420,7 +2420,7 @@
     "set": "scanned",
     "readBy": "qwen2.5vl:3b",
     "outcome": "needs_review",
-    "durationMs": 298059,
+    "durationMs": 285174,
     "fields": {
       "supplier": {
         "expected": "Severn Valley Energy",
@@ -2439,13 +2439,13 @@
       },
       "billing_period_start": {
         "expected": "2025-05-26",
-        "actual": "2605-05-20",
-        "correct": false
+        "actual": "2025-05-26",
+        "correct": true
       },
       "billing_period_end": {
         "expected": "2025-06-28",
-        "actual": "2806-06-20",
-        "correct": false
+        "actual": "2025-06-28",
+        "correct": true
       },
       "consumption_kwh": {
         "expected": 2318.1,
@@ -2454,8 +2454,8 @@
       },
       "unit_rate_pence": {
         "expected": 18.28,
-        "actual": 0.1828,
-        "correct": false
+        "actual": 18.28,
+        "correct": true
       },
       "standing_charge_pence_per_day": {
         "expected": 117.16,

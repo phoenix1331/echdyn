@@ -8,7 +8,14 @@ export {
   type ExtractionSettings,
   type ExtractionSource,
 } from "./extract";
-export { normalisePrinted, parsePrintedNumber, toPrintedSchema, type PrintedUnit } from "./printed";
+export {
+  normalisePrinted,
+  parsePrintedDate,
+  parsePrintedNumber,
+  toPrintedSchema,
+  type PrintedOptions,
+  type PrintedUnit,
+} from "./printed";
 export {
   buildTextPrompt,
   buildVisionPrompt,

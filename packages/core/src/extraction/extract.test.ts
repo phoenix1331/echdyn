@@ -133,11 +133,12 @@ describe.skipIf(!testUrl)("extractFields", () => {
     expect(user?.content).toContain("2 pages");
     expect(client.requests[0]).toMatchObject({
       model: "qwen2.5vl:3b",
-      format: toPrintedSchema(schema),
+      // Dates copied as printed for scans, so the grammar no longer forces YYYY-MM-DD
+      format: toPrintedSchema(schema, { dates: true }),
     });
     expect(extraction).toMatchObject({
       model: "qwen2.5vl:3b",
-      promptVersion: "vision-v1",
+      promptVersion: "vision-v2",
       parsed: { total_gbp: 386.88 },
     });
   });
