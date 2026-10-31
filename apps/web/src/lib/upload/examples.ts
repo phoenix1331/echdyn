@@ -11,15 +11,23 @@ const manifestSchema = z.array(
   }),
 );
 
-/** The repository's examples/ folder; `next dev` runs in apps/web */
+/**
+ * The repository's examples/ folder; `next dev` runs in apps/web. Read at runtime, never
+ * bundled: the turbopackIgnore markers stop the build tracing the whole project into the
+ * server output because of these runtime paths
+ */
 export function examplesDir(): string {
-  return process.env.EXAMPLES_DIR ?? resolve(process.cwd(), "../../examples");
+  return (
+    process.env.EXAMPLES_DIR ?? resolve(/*turbopackIgnore: true*/ process.cwd(), "../../examples")
+  );
 }
 
 /** The examples listed in examples.json, or none when the folder is missing or invalid */
 export async function loadExamples(dir = examplesDir()): Promise<Example[]> {
   try {
-    const raw: unknown = JSON.parse(await readFile(join(dir, "examples.json"), "utf8"));
+    const raw: unknown = JSON.parse(
+      await readFile(join(/*turbopackIgnore: true*/ dir, "examples.json"), "utf8"),
+    );
     const parsed = manifestSchema.safeParse(raw);
     return parsed.success ? parsed.data : [];
   } catch {
@@ -37,7 +45,7 @@ export async function readExample(
     return null;
   }
   try {
-    return new Uint8Array(await readFile(join(dir, name)));
+    return new Uint8Array(await readFile(join(/*turbopackIgnore: true*/ dir, name)));
   } catch {
     return null;
   }

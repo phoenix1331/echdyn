@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { logout } from "@/app/login/actions";
 import { Logo } from "@/components/logo";
-import { MainNav } from "@/components/main-nav";
+import { Suspense } from "react";
+import { MainNav, MainNavFallback } from "@/components/main-nav";
 
 export function SiteHeader() {
   return (
@@ -14,7 +15,9 @@ export function SiteHeader() {
           >
             <Logo className="h-7 w-auto" />
           </Link>
-          <MainNav />
+          <Suspense fallback={<MainNavFallback />}>
+            <MainNav />
+          </Suspense>
         </div>
         <div className="flex items-center gap-2">
           <Link
