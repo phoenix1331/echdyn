@@ -46,6 +46,28 @@ function digits(random: Random, length: number): string {
   return Array.from({ length }, (_, i) => String(random.int(i === 0 ? 1 : 0, 9))).join("");
 }
 
+interface Reading {
+  consumption_kwh: number;
+  gasConversion?: SyntheticBill["gasConversion"];
+}
+
+/** Gas is metered by volume: kWh = m3 x volume correction x calorific value / 3.6 */
+function gasReading(random: Random): Reading {
+  const cubicMetres = random.int(80, 1400);
+  const calorificValue = random.decimal(38.8, 40.2, 1);
+  return {
+    consumption_kwh: Math.round((cubicMetres * GAS_VOLUME_CORRECTION * calorificValue) / 3.6),
+    gasConversion: { cubicMetres, calorificValue },
+  };
+}
+
+/** Mostly whole kWh, sometimes a decimal reading */
+function electricityReading(random: Random): Reading {
+  return {
+    consumption_kwh: random.chance(0.8) ? random.int(200, 6000) : random.decimal(200, 6000, 1),
+  };
+}
+
 export function generateBill(random: Random, supplier: string): SyntheticBill {
   const fuel: Fuel = random.chance(0.7) ? "electricity" : "gas";
   const start = new Date(Date.UTC(random.pick([2025, 2026]), random.int(0, 11), random.int(1, 28)));
@@ -54,16 +76,8 @@ export function generateBill(random: Random, supplier: string): SyntheticBill {
   const billing_period_end = isoDate(end);
   const days = daysInclusive(billing_period_start, billing_period_end);
 
-  let consumption_kwh: number;
-  let gasConversion: SyntheticBill["gasConversion"];
-  if (fuel === "gas") {
-    const cubicMetres = random.int(80, 1400);
-    const calorificValue = random.decimal(38.8, 40.2, 1);
-    consumption_kwh = Math.round((cubicMetres * GAS_VOLUME_CORRECTION * calorificValue) / 3.6);
-    gasConversion = { cubicMetres, calorificValue };
-  } else {
-    consumption_kwh = random.chance(0.8) ? random.int(200, 6000) : random.decimal(200, 6000, 1);
-  }
+  const { consumption_kwh, gasConversion } =
+    fuel === "gas" ? gasReading(random) : electricityReading(random);
 
   const unit_rate_pence = fuel === "gas" ? random.decimal(5.5, 11.9, 2) : random.decimal(18, 34, 2);
   const standing_charge_pence_per_day = random.decimal(20, 120, 2);

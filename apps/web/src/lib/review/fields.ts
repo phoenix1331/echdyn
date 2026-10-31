@@ -157,8 +157,10 @@ export function buildReview(
       continue;
     }
 
-    let issue: FieldIssue;
-    if (flag.rule === RUN_MISMATCH_RULE) {
+    const issueFor = (): FieldIssue => {
+      if (flag.rule !== RUN_MISMATCH_RULE) {
+        return { kind: flag.rule ? "check" : "format", message: text, runs };
+      }
       const readings = others
         .filter((other) => other.parsed?.[flag.field] !== primary?.parsed?.[flag.field])
         .map((other) => {
@@ -169,19 +171,16 @@ export function buildReview(
           );
           return `run ${String(other.runNumber)} read ${value || "nothing"}`;
         });
-      issue = { kind: "mismatch", message: `The runs disagree: ${readings.join(", ")}`, runs: [] };
-    } else {
-      issue = { kind: flag.rule ? "check" : "format", message: text, runs };
-    }
+      return { kind: "mismatch", message: `The runs disagree: ${readings.join(", ")}`, runs: [] };
+    };
+    const issue = issueFor();
 
     const forField = issues.get(flag.field) ?? new Map<string, FieldIssue>();
     const key = `${issue.kind}|${issue.message}`;
     const existing = forField.get(key);
-    if (existing) {
-      existing.runs.push(...runs);
-    } else {
-      forField.set(key, issue);
-    }
+    // The same problem from another run adds that run to it rather than repeating it
+    existing?.runs.push(...runs);
+    forField.set(key, existing ?? issue);
     issues.set(flag.field, forField);
 
     if (flag.rule && flag.rule !== RUN_MISMATCH_RULE) {
