@@ -10,6 +10,8 @@ export default tseslint.config(
       ".claude/**",
       "**/node_modules/**",
       "**/.next/**",
+      "e2e/test-results/**",
+      "e2e/report/**",
       "**/coverage/**",
       "**/next-env.d.ts",
     ],
@@ -21,7 +23,7 @@ export default tseslint.config(
       globals: globals.node,
       parserOptions: {
         projectService: {
-          allowDefaultProject: ["*.mjs"],
+          allowDefaultProject: ["*.mjs", "e2e/*.mjs"],
         },
         tsconfigRootDir: import.meta.dirname,
       },
@@ -31,7 +33,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["*.mjs"],
+    files: ["*.mjs", "e2e/*.mjs"],
     ...tseslint.configs.disableTypeChecked,
   },
   ...nextCoreWebVitals.map((config) => ({

@@ -4,6 +4,10 @@ node_modules/
 .pnpm-store/
 dist/
 coverage/
+
+# Playwright output
+e2e/test-results/
+e2e/report/
 *.tsbuildinfo
 
 .env

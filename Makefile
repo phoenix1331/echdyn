@@ -1,8 +1,9 @@
 .DEFAULT_GOAL := help
-.PHONY: help up down build restart ps shell logs install models typecheck lint test coverage migrate seed fresh eval-generate eval
+.PHONY: help up down build restart ps shell logs install models typecheck lint test coverage e2e migrate seed fresh eval-generate eval
 
 APP := web
 EXEC := docker compose exec $(APP)
+E2E := docker compose -p echdyn-e2e -f docker-compose.yml -f docker-compose.e2e.yml
 
 -include .env
 
@@ -48,6 +49,12 @@ test: ## Run the Vitest suite
 
 coverage: ## Run tests with coverage (90% minimum)
 	@$(EXEC) pnpm test:coverage
+
+e2e: ## Run the Playwright review flow on an isolated stack with a stub model
+	@$(E2E) up -d -V --wait web worker ollama-stub
+	@$(E2E) exec -T web pnpm db:migrate
+	@$(E2E) exec -T web pnpm db:seed
+	@$(E2E) run --rm playwright; status=$$?; $(E2E) rm -fsv storage; $(E2E) down; exit $$status
 
 migrate: ## Run database migrations
 	@$(EXEC) pnpm db:migrate

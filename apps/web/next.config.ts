@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Dev assets and the hot reload socket only answer listed hosts; the e2e browser uses "web"
+  allowedDevOrigins: process.env.NEXT_ALLOWED_DEV_ORIGINS?.split(",") ?? [],
   transpilePackages: ["@echdyn/core"],
   cacheComponents: true,
   partialPrefetching: true,

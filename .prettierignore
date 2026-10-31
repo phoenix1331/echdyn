@@ -1,5 +1,7 @@
 pnpm-lock.yaml
 coverage
 **/.next
+e2e/test-results
+e2e/report
 **/next-env.d.ts
 .claude

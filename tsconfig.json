@@ -4,5 +4,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["vitest.config.ts", "vitest.global-setup.ts"]
+  "include": ["vitest.config.ts", "vitest.global-setup.ts", "e2e/**/*.ts"]
 }
