@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>echdyn: self-hosted document extraction with local LLMs</title>
+    <meta
+      name="description"
+      content="echdyn turns PDFs and scanned paperwork into validated, structured data using local LLMs through Ollama. Nothing leaves your own hardware."
+    />
+    <meta property="og:title" content="echdyn" />
+    <meta
+      property="og:description"
+      content="Self-hosted document extraction with local LLMs. Validated, reviewed and audited."
+    />
+    <meta property="og:image" content="images/review.png" />
+    <link rel="icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* The same palette as the app: grey page, white surfaces, lilac frame, one violet accent */
+      :root {
+        --stone: #f5f5f8;
+        --surface: #ffffff;
+        --line: #e2e3ea;
+        --ink: #1b2133;
+        --muted: #5f6478;
+        --quarry: #e3e2fd;
+        --highlight: #6f52fc;
+        --on-highlight: #ffffff;
+        --highlight-soft: #ece8fe;
+        --highlight-ink: #4329c4;
+        --moss: #1d7a50;
+        --moss-soft: #dcf3e6;
+        --code: #1b2133;
+        --on-code: #eceaf4;
+        color-scheme: light dark;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --stone: #0b1324;
+          --surface: #131d33;
+          --line: #26314b;
+          --ink: #eceaf4;
+          --muted: #9ca3bd;
+          --quarry: #070d1a;
+          --highlight: #a48bff;
+          --on-highlight: #160b45;
+          --highlight-soft: #2a2356;
+          --highlight-ink: #d8cfff;
+          --moss: #81e0b0;
+          --moss-soft: #15332a;
+          --code: #070d1a;
+          --on-code: #eceaf4;
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--stone);
+        color: var(--ink);
+        font-family: "Schibsted Grotesk", system-ui, sans-serif;
+        font-size: 1.0625rem;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      a {
+        color: var(--highlight-ink);
+      }
+
+      code {
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+        font-size: 0.9em;
+      }
+
+      .wrap {
+        width: min(1120px, 100% - 32px);
+        margin-inline: auto;
+      }
+
+      /* Header */
+      .frame {
+        background: var(--quarry);
+      }
+
+      .frame .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-block: 16px;
+      }
+
+      .logo img {
+        width: 150px;
+      }
+
+      .logo-white {
+        display: none !important;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .logo-dark {
+          display: none !important;
+        }
+
+        .logo-white {
+          display: block !important;
+        }
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        background: var(--highlight);
+        color: var(--on-highlight);
+        transition: filter 0.15s;
+      }
+
+      .button:hover {
+        filter: brightness(1.08);
+      }
+
+      .button.quiet {
+        background: var(--surface);
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+
+      .button svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+
+      /* Hero */
+      .hero {
+        background: linear-gradient(var(--quarry), var(--stone));
+        padding-block: 56px 0;
+        text-align: center;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: var(--highlight-soft);
+        color: var(--highlight-ink);
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      h1 {
+        font-size: clamp(2.25rem, 5vw, 3.5rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin: 20px auto 16px;
+        max-width: 21ch;
+      }
+
+      .lede {
+        color: var(--muted);
+        font-size: 1.1875rem;
+        max-width: 60ch;
+        margin: 0 auto 28px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 48px;
+      }
+
+      .shot {
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        box-shadow: 0 24px 60px -24px rgb(27 33 51 / 0.35);
+      }
+
+      .shot .bar {
+        display: flex;
+        gap: 6px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .shot .bar span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--line);
+      }
+
+      /* Sections */
+      section {
+        padding-block: 80px 0;
+      }
+
+      h2 {
+        font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+        line-height: 1.2;
+        letter-spacing: -0.015em;
+        margin: 0 0 12px;
+      }
+
+      .intro {
+        color: var(--muted);
+        max-width: 62ch;
+        margin: 0 0 36px;
+      }
+
+      /* Promises */
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+
+      .fact {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 22px;
+      }
+
+      .fact h3 {
+        margin: 0 0 6px;
+        font-size: 1.0625rem;
+      }
+
+      .fact p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.975rem;
+      }
+
+      /* Pipeline */
+      .pipeline {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 12px;
+        counter-reset: stage;
+      }
+
+      .pipeline li {
+        counter-increment: stage;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 20px;
+        position: relative;
+      }
+
+      .pipeline li::before {
+        content: counter(stage);
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--highlight-soft);
+        color: var(--highlight-ink);
+        font-weight: 700;
+        font-size: 0.875rem;
+        margin-bottom: 12px;
+      }
+
+      .pipeline strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .pipeline span {
+        color: var(--muted);
+        font-size: 0.9375rem;
+      }
+
+      /* Screens */
+      .screens {
+        display: grid;
+        gap: 72px;
+      }
+
+      .screen {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr);
+        gap: 40px;
+        align-items: center;
+      }
+
+      .screen:nth-child(even) .copy {
+        order: 2;
+      }
+
+      .screen h3 {
+        font-size: 1.375rem;
+        margin: 0 0 8px;
+      }
+
+      .screen p {
+        color: var(--muted);
+        margin: 0;
+      }
+
+      @media (max-width: 800px) {
+        .screen {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .screen:nth-child(even) .copy {
+          order: 0;
+        }
+      }
+
+      /* Results */
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.975rem;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+
+      th {
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 0.875rem;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      td.num {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .stat {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 22px;
+      }
+
+      .stat b {
+        display: block;
+        font-size: 2.25rem;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: 0.9375rem;
+      }
+
+      .stat.good {
+        background: var(--moss-soft);
+        border-color: transparent;
+      }
+
+      .stat.good b {
+        color: var(--moss);
+      }
+
+      .note {
+        margin-top: 24px;
+        padding: 18px 22px;
+        border-left: 4px solid var(--highlight);
+        background: var(--highlight-soft);
+        border-radius: 0 12px 12px 0;
+        font-size: 0.975rem;
+      }
+
+      .note p {
+        margin: 0;
+      }
+
+      .note p + p {
+        margin-top: 10px;
+      }
+
+      /* Stack and setup */
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .chips li {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 0.9375rem;
+      }
+
+      pre {
+        background: var(--code);
+        color: var(--on-code);
+        border-radius: 14px;
+        padding: 22px 24px;
+        overflow-x: auto;
+        line-height: 1.7;
+        margin: 0;
+      }
+
+      pre .comment {
+        color: #9ca3bd;
+      }
+
+      /* Footer */
+      footer {
+        margin-top: 96px;
+        background: var(--quarry);
+        padding-block: 40px;
+        color: var(--muted);
+        font-size: 0.9375rem;
+      }
+
+      footer .wrap {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      footer p {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="frame">
+      <div class="wrap">
+        <a class="logo" href="./" aria-label="echdyn home">
+          <img
+            class="logo-dark"
+            src="images/echdyn-logo-dark.webp"
+            alt="echdyn"
+            width="800"
+            height="190"
+          />
+          <img
+            class="logo-white"
+            src="images/echdyn-logo-white.webp"
+            alt="echdyn"
+            width="800"
+            height="190"
+          />
+        </a>
+        <a class="button quiet" href="https://github.com/phoenix1331/echdyn">
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            />
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div class="wrap">
+          <span class="eyebrow">Open source, runs on your own hardware</span>
+          <h1>Self-hosted document extraction with local LLMs</h1>
+          <p class="lede">
+            echdyn turns PDFs and scanned paperwork into validated, structured data. A local model
+            reads each document, business rules check what it read, a person reviews anything
+            uncertain, and approved records go out by API, webhook or export. Nothing leaves your
+            machine.
+          </p>
+          <div class="actions">
+            <a class="button" href="https://github.com/phoenix1331/echdyn">View on GitHub</a>
+            <a class="button quiet" href="https://github.com/phoenix1331/echdyn#getting-started"
+              >Run it locally</a
+            >
+          </div>
+          <div class="shot">
+            <div class="bar" aria-hidden="true"><span></span><span></span><span></span></div>
+            <img
+              src="images/review.png"
+              alt="The review screen: the source PDF beside the extracted fields, with two failed arithmetic checks listed at the top"
+              width="2560"
+              height="1600"
+            />
+          </div>
+        </div>
+      </div>
+
+      <section>
+        <div class="wrap">
+          <h2>Built to be trusted, not just to be clever</h2>
+          <p class="intro">
+            Businesses still pay people to retype supplier PDFs into spreadsheets, and many will
+            never send contracts or quality data to a cloud API. echdyn is built around one
+            question: when can you trust what a small local model read?
+          </p>
+          <div class="facts">
+            <div class="fact">
+              <h3>Local by default</h3>
+              <p>
+                Ollama, Postgres, Redis and storage start with one command. Point it at a GPU
+                machine on your network when you have one.
+              </p>
+            </div>
+            <div class="fact">
+              <h3>Checked by arithmetic</h3>
+              <p>
+                The demo document is a UK energy bill because its figures add up. A model can
+                misread VAT, but it cannot make the total balance.
+              </p>
+            </div>
+            <div class="fact">
+              <h3>A person decides</h3>
+              <p>
+                Clean documents can be approved automatically. Anything flagged waits for a
+                reviewer, with the PDF beside the fields and the reason for each flag.
+              </p>
+            </div>
+            <div class="fact">
+              <h3>Every value traceable</h3>
+              <p>
+                Each approved value links back to its source PDF, the model run that read it and any
+                correction a reviewer made.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>How a document moves through</h2>
+          <p class="intro">
+            Each upload runs as queued background jobs, so the app stays responsive while a model
+            works through the pile.
+          </p>
+          <ol class="pipeline">
+            <li>
+              <strong>Ingest</strong>
+              <span>Stored, hashed to catch duplicates, queued.</span>
+            </li>
+            <li>
+              <strong>Pre-process</strong>
+              <span>Each page sorted into text or scan; scans rendered to images.</span>
+            </li>
+            <li>
+              <strong>Extract</strong>
+              <span>A text or vision model fills the schema, constrained to its JSON shape.</span>
+            </li>
+            <li>
+              <strong>Validate</strong>
+              <span>Zod checks the shape, business rules check the sums and dates.</span>
+            </li>
+            <li>
+              <strong>Score</strong>
+              <span>Read twice; anything that failed or changed between runs is flagged.</span>
+            </li>
+            <li>
+              <strong>Review</strong>
+              <span>Approved automatically or by a person, then sent out by webhook.</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>See it working</h2>
+          <p class="intro">
+            These screens are captured automatically by a Playwright script against a fresh stack,
+            using the example bills that ship with the repo.
+          </p>
+          <div class="screens">
+            <div class="screen">
+              <div class="copy">
+                <h3>Know before you upload</h3>
+                <p>
+                  Drop in PDFs and echdyn inspects them first: page count, typed or scanned pages,
+                  which model will read them, how long it should take and whether you have sent it
+                  before. Nothing is stored until you proceed.
+                </p>
+              </div>
+              <div class="shot">
+                <img
+                  src="images/upload-summary.png"
+                  alt="The upload summary showing pages, reading path and time estimate for each file"
+                  width="2560"
+                  height="1600"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+            <div class="screen">
+              <div class="copy">
+                <h3>Progress you can read</h3>
+                <p>
+                  Local models are not instant, so the list says what is happening: the stage each
+                  document is in, its place in the queue and an estimate from recent runs, rather
+                  than a bare spinner.
+                </p>
+              </div>
+              <div class="shot">
+                <img
+                  src="images/progress.png"
+                  alt="The document list with queue positions and time estimates while bills are processed"
+                  width="2560"
+                  height="1600"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+            <div class="screen">
+              <div class="copy">
+                <h3>Fix only what needs fixing</h3>
+                <p>
+                  Flagged fields are highlighted with the rule they broke. Correct a value and
+                  approve; the correction is recorded against the run that got it wrong.
+                </p>
+              </div>
+              <div class="shot">
+                <img
+                  src="images/review-edited.png"
+                  alt="The review screen with a corrected VAT value"
+                  width="2560"
+                  height="1600"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+            <div class="screen">
+              <div class="copy">
+                <h3>Searchable records</h3>
+                <p>
+                  Approved data is searchable in the app, filterable by any field in the API (every
+                  bill over 30p per kWh, say) and exportable as CSV or Excel.
+                </p>
+              </div>
+              <div class="shot">
+                <img
+                  src="images/records.png"
+                  alt="The records list of approved bills"
+                  width="2560"
+                  height="1600"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+            <div class="screen">
+              <div class="copy">
+                <h3>The whole story of a record</h3>
+                <p>
+                  Upload, each model run, what the checks flagged, who corrected what and who
+                  approved it. The source PDF is one click away.
+                </p>
+              </div>
+              <div class="shot">
+                <img
+                  src="images/audit.png"
+                  alt="A record's approved values beside its audit trail"
+                  width="2560"
+                  height="1600"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>Measured, not claimed</h2>
+          <p class="intro">
+            An eval harness runs the real pipeline over labelled bills and reports how often the
+            model was right, how often it asked for help and, most importantly, how often it was
+            wrong without anyone noticing.
+          </p>
+          <div class="stats">
+            <div class="stat good">
+              <b>0 of 21</b>
+              <span>auto-approved documents that held a wrong value</span>
+            </div>
+            <div class="stat">
+              <b>96.2%</b>
+              <span>of fields read correctly</span>
+            </div>
+            <div class="stat">
+              <b>40%</b>
+              <span>of documents sent to a person for review</span>
+            </div>
+          </div>
+          <div class="panel">
+            <table>
+              <thead>
+                <tr>
+                  <th>Set</th>
+                  <th>Read by</th>
+                  <th>Field accuracy</th>
+                  <th>Fully correct</th>
+                  <th>Flagged</th>
+                  <th>Median time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>30 text bills</td>
+                  <td><code>llama3.2</code> (3B)</td>
+                  <td class="num">96.7%</td>
+                  <td class="num">66.7%</td>
+                  <td class="num">33.3%</td>
+                  <td class="num">32.5 s</td>
+                </tr>
+                <tr>
+                  <td>5 scanned bills</td>
+                  <td><code>qwen2.5vl</code> (3B)</td>
+                  <td class="num">93.3%</td>
+                  <td class="num">40.0%</td>
+                  <td class="num">80.0%</td>
+                  <td class="num">334.8 s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="note">
+            <p>
+              <strong>A baseline from a laptop.</strong> These runs used a CPU only, with 8 GB of
+              RAM and 4 cores available, so only 3B models would fit and every token was generated
+              on the CPU. The eval will be rerun on a home server with a GPU and larger models, and
+              the results added for comparison.
+            </p>
+            <p>
+              Even so, every mistake the small models made was caught and sent to review. Prompts
+              were improved through the eval: asking the model to copy values exactly as printed and
+              parsing them in code took text accuracy from 84.2% to 96.7%.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>Under the hood</h2>
+          <p class="intro">
+            TypeScript throughout, in a pnpm workspace: a Next.js app for the UI and API, a Node
+            worker for the pipeline, and a shared core both of them use.
+          </p>
+          <ul class="chips">
+            <li>TypeScript</li>
+            <li>Node 24</li>
+            <li>Next.js 16</li>
+            <li>Ollama</li>
+            <li>BullMQ and Redis</li>
+            <li>Postgres and JSONB</li>
+            <li>Drizzle ORM</li>
+            <li>S3-compatible storage</li>
+            <li>Zod 4</li>
+            <li>pdfjs</li>
+            <li>Vitest</li>
+            <li>Playwright</li>
+            <li>Docker Compose</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>Run it yourself</h2>
+          <p class="intro">
+            You need Docker. Everything else, the model included, runs in containers. Then upload
+            one of the example bills in <code>examples/</code>, each of which tests a different
+            trap.
+          </p>
+          <pre><code><span class="comment"># clone and configure</span>
+git clone https://github.com/phoenix1331/echdyn.git
+cd echdyn
+cp .env.example .env
+
+<span class="comment"># start the stack, set up the database, pull the models</span>
+make up
+make migrate
+make seed
+make models
+
+<span class="comment"># then open http://localhost:8000</span></code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <p>
+          <strong>echdyn</strong>, from the Welsh <em>echdynnu</em>, "to extract". Said "ECH-din",
+          with the ch as in "loch".
+        </p>
+        <p>
+          <a href="https://github.com/phoenix1331/echdyn">GitHub</a> ·
+          <a href="https://phoenix1331.co.uk">phoenix1331.co.uk</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

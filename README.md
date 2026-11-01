@@ -11,6 +11,8 @@ Self-hosted document extraction with local LLMs: PDFs and scanned paperwork in, 
 
 echdyn (from the Welsh _echdynnu_, "to extract", said "ECH-din" with the ch as in "loch") reads each upload with a model running in Ollama, checks the result against business rules, sends anything uncertain to a human reviewer, and publishes approved records through a REST API, signed webhooks and CSV or Excel exports.
 
+**[See the showcase site](https://phoenix1331.github.io/echdyn/)** for a tour of the screens and results.
+
 ![The review screen: the source PDF beside the extracted fields, with the failed arithmetic checks listed at the top](docs/images/review.png)
 
 ## What this demonstrates
