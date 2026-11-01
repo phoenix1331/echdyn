@@ -18,5 +18,7 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
+  // `make screenshots` runs only the @screenshots spec; every other run leaves it out
+  ...(process.env.SCREENSHOTS ? { grep: /@screenshots/ } : { grepInvert: /@screenshots/ }),
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
 });

@@ -5,6 +5,8 @@
 import { createServer } from "node:http";
 
 const port = Number(process.env.PORT ?? 11434);
+// Seconds of "thinking" per call, so screenshots can catch a document mid-extraction
+const delayMs = Number(process.env.STUB_DELAY_MS ?? 0);
 
 // Printed values, as the extraction prompt asks for; the pipeline parses the units
 const reading = {
@@ -43,14 +45,18 @@ createServer((request, response) => {
   });
   request.on("end", () => {
     const { model = "stub" } = JSON.parse(raw || "{}");
-    reply(response, 200, {
-      model,
-      created_at: new Date().toISOString(),
-      message: { role: "assistant", content: JSON.stringify(reading) },
-      done: true,
-      done_reason: "stop",
-      total_duration: 1_000_000,
-    });
+    setTimeout(
+      () =>
+        reply(response, 200, {
+          model,
+          created_at: new Date().toISOString(),
+          message: { role: "assistant", content: JSON.stringify(reading) },
+          done: true,
+          done_reason: "stop",
+          total_duration: 1_000_000,
+        }),
+      delayMs,
+    );
   });
 }).listen(port, () => {
   console.log(`ollama stub listening on ${String(port)}`);

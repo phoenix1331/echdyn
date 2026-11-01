@@ -53,6 +53,9 @@ services:
   ollama-stub:
     image: node:24-bookworm-slim
     command: node /e2e/ollama-stub.mjs
+    environment:
+      # 0 for tests; make screenshots slows it so progress can be captured
+      STUB_DELAY_MS: ${STUB_DELAY_MS:-0}
     volumes:
       - ./e2e:/e2e:ro
     healthcheck:
@@ -72,6 +75,8 @@ services:
     image: mcr.microsoft.com/playwright:v1.64.1-noble
     profiles: [test]
     user: "1000:1000"
+    # Chromium keeps tabs in shared memory; Docker's 64 MB default crashes the PDF viewer
+    shm_size: 1gb
     working_dir: /app
     volumes:
       - .:/app
