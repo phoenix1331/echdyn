@@ -4,6 +4,8 @@
 APP := web
 EXEC := docker compose exec $(APP)
 E2E := docker compose -p echdyn-e2e -f docker-compose.yml -f docker-compose.e2e.yml
+# Storage first with -v drops its throwaway volume; plain down keeps the dependency volumes for speed
+E2E_DOWN := ($(E2E) rm -fsv storage; $(E2E) down)
 # Screenshots slow the stub model so the list can be caught mid-extraction
 screenshots: export STUB_DELAY_MS := 3000
 
@@ -15,8 +17,9 @@ help: ## List available targets
 up: ## Start all containers in the background
 	@docker compose up -d
 
-down: ## Stop and remove containers
+down: ## Stop and remove containers, including any an interrupted e2e run left behind
 	@docker compose down
+	@$(E2E_DOWN) >/dev/null 2>&1 || true
 
 build: ## Rebuild the app image
 	@docker compose build
@@ -52,19 +55,21 @@ test: ## Run the Vitest suite
 coverage: ## Run tests with coverage (90% minimum)
 	@$(EXEC) pnpm test:coverage
 
-# The isolated stack for Playwright: up, migrated and seeded; runs $(1), then always tears down
+# The isolated stack for Playwright: up, migrated and seeded; runs $(1), then always tears down,
+# even when start-up, migrating or seeding fails
 define e2e_run
-	@$(E2E) up -d -V --wait web worker ollama-stub
-	@$(E2E) exec -T web pnpm db:migrate
-	@$(E2E) exec -T web pnpm db:seed
-	@$(E2E) run --rm $(1) playwright; status=$$?; $(E2E) rm -fsv storage; $(E2E) down; exit $$status
+	@$(E2E) up -d -V --wait web worker ollama-stub \
+		&& $(E2E) exec -T web pnpm db:migrate \
+		&& $(E2E) exec -T web pnpm db:seed \
+		&& $(E2E) run --rm $(1) playwright; \
+	status=$$?; $(E2E_DOWN); exit $$status
 endef
 
 e2e: ## Run the Playwright review flow on an isolated stack with a stub model
 	$(call e2e_run,)
 
 screenshots: ## Capture the README and site screenshots into docs/images (isolated stack)
-	@$(E2E) down >/dev/null 2>&1 || true
+	@$(E2E_DOWN) >/dev/null 2>&1 || true
 	$(call e2e_run,-e SCREENSHOTS=1)
 
 migrate: ## Run database migrations
